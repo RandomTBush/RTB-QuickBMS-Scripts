@@ -12,5 +12,3 @@ math ZSIZE -= 16
 
 get NAME basename
 clog NAME 16 ZSIZE SIZE
-
-endfunction

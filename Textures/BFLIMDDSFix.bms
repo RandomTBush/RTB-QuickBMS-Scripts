@@ -36,5 +36,3 @@ endif
 log NAME 0 FILESIZE MEMORY_FILE
 
 endif
-
-endfunction

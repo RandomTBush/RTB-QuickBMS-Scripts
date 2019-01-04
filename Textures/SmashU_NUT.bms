@@ -170,8 +170,6 @@ log NAME 0 SIZE MEMORY_FILE
 
 endif
 
-
-
 if NTWU == 0x4E545033
 
 log MEMORY_FILE 0 0
@@ -212,8 +210,4 @@ log NAME 0 DDSSIZE MEMORY_FILE
 
 endif
 
-
-
 next i
-
-endfunction

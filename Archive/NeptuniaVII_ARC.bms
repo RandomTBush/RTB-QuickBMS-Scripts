@@ -81,5 +81,3 @@ log NAME FILESTART FILESIZE
 endif
 
 next i
-
-endfunction

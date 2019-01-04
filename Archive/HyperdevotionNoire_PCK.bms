@@ -43,5 +43,3 @@ string NAME + FILENAME
 
 log NAME PACKFILESTART PACKFILESIZE
 next i
-
-endfunction

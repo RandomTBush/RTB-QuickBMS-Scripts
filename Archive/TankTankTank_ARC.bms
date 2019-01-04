@@ -23,5 +23,3 @@ for i = 0 < FILES
 	log PATH FILEOFFSET FILESIZE
 
 next i
-
-endfunction

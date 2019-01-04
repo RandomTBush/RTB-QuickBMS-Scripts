@@ -60,5 +60,3 @@ get NAME basename
 get DDSSIZE asize MEMORY_FILE
 string NAME + .dds
 log NAME 0 DDSSIZE MEMORY_FILE
-
-endfunction

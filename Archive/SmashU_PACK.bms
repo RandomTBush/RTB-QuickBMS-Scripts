@@ -27,5 +27,3 @@ goto NAMESTART[i]
 get NAME string
 log NAME FILESTART[i] FILESIZE[i]
 next i
-
-endfunction

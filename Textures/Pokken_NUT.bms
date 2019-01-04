@@ -190,5 +190,3 @@ log NAME 0 DDSSIZE MEMORY_FILE
 next i
 
 endif
-
-endfunction

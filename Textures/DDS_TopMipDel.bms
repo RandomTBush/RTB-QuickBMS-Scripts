@@ -55,5 +55,3 @@ string NAME + .dds
 log NAME 0 SIZE MEMORY_FILE
 
 next i
-
-endfunction

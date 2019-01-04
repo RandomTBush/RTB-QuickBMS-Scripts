@@ -25,5 +25,3 @@ get ASIZE asize MEMORY_FILE
 get NAME basename
 string NAME + .dds
 log NAME 0 ASIZE MEMORY_FILE
-
-endfunction

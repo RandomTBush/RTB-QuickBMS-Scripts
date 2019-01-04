@@ -10,5 +10,3 @@ goto 4
 get SIZE long
 get NAME basename
 clog NAME 16 ZSIZE SIZE
-
-endfunction

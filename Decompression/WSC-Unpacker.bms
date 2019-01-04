@@ -8,5 +8,3 @@ get ZSIZE asize
 get NAME filename
 string NAME += .dec
 clog NAME 0 ZSIZE ZSIZE
-
-endfunction

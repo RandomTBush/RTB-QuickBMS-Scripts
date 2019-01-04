@@ -140,5 +140,3 @@ string PATH + .gtx
 log PATH 0 SIZE MEMORY_FILE
 
 next i
-
-endfunction

@@ -86,5 +86,3 @@ for i = 0 < FILECOUNT
 	goto BACKUP
 
 next i
-
-endfunction

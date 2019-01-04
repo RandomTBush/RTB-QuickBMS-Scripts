@@ -10,5 +10,3 @@ get ZSIZE long
 get NAME BASENAME
 
 clog NAME 20 ZSIZE SIZE
-
-endfunction

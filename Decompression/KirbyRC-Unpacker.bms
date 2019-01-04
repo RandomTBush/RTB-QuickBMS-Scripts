@@ -10,5 +10,3 @@ math ZSIZE -= 128
 get NAME filename
 string NAME += .dec
 clog NAME 128 ZSIZE ZSIZE
-
-endfunction

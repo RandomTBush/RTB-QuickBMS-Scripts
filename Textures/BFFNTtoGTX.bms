@@ -92,5 +92,3 @@ log NAME 0 SIZE MEMORY_FILE
 math OFFSET += FLIMSIZE
 
 next i
-
-endfunction

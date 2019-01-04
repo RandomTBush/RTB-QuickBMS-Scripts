@@ -543,5 +543,3 @@ goto NEXTFILE
 next j
 
 next i
-
-endfunction

@@ -11,5 +11,3 @@ get SIZE long
 get NAME filename
 string NAME += .arc
 clog NAME 16 ZSIZE SIZE
-
-endfunction

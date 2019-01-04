@@ -69,5 +69,3 @@ clog NAME FILESTART ZSIZE ZSIZE
 goto RETURN
 
 next i
-
-endfunction

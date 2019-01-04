@@ -43,5 +43,3 @@ string NAME + .dds
 log NAME FILESTART[i] FILESIZE 1
 
 next i
-
-endfunction

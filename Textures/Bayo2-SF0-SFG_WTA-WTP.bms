@@ -75,5 +75,3 @@ log NAME 0 SIZE MEMORY_FILE
 math OFFSET5 += 0xC0
 
 next i
-
-endfunction

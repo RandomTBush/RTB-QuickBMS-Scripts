@@ -69,5 +69,3 @@ if WRITE = 1
 get DDSSIZE asize MEMORY_FILE
 log NAME 0 DDSSIZE MEMORY_FILE
 endif
-
-endfunction

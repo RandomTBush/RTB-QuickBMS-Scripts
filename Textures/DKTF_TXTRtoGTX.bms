@@ -99,5 +99,3 @@ math SWIZZLE += 2
 math TEXSTART += TEXSIZE
 
 next i
-
-endfunction

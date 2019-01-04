@@ -38,5 +38,3 @@ next i
 
 get FILESIZE asize MEMORY_FILE
 log NAME 0 FILESIZE MEMORY_FILE
-
-endfunction

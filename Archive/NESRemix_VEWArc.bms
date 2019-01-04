@@ -20,6 +20,3 @@ get NAMELENGTH long
 get NAME string
 log NAME FILESTART FILESIZE
 next i
-
-
-endfunction

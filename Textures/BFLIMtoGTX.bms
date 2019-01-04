@@ -143,5 +143,3 @@ putVarChr MEMORY_FILE 0x76 SWIZZLE byte
 
 get SIZE asize MEMORY_FILE
 log NAME 0 SIZE MEMORY_FILE
-
-endfunction
