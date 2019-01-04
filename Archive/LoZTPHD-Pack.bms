@@ -1,0 +1,25 @@
+# The Legend of Zelda: Twilight Princess HD - PACK Extractor
+# Make sure to pre-decompress the GZ files first!
+# Written by Random Talking Bush
+
+endian big
+idstring TMPK
+get FILES long
+get PADDING long
+get BLANK long
+
+for i = 0 < FILES
+
+	get FILENAME long
+	get FILEOFFSET long
+	get FILESIZE long
+	get BLANK long
+	savepos OFFSET
+	goto FILENAME
+	get NAME string
+	goto OFFSET
+	log NAME FILEOFFSET FILESIZE
+
+next i
+
+endfunction

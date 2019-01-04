@@ -1,0 +1,20 @@
+# Kamen Rider: Battride War II/Genesis & Summonride - NativePS.NCAT Extractor
+# Written by Random Talking Bush
+
+endian little
+get FILES long
+get UNKNOWN long
+get UNKNOWN long
+get UNKNOWN long
+
+for i = 0 < FILES
+
+	get OFFSET long
+	get BLOCKSIZE long
+	get FILESIZE long
+	getdstring NAME 0x74
+	log NAME OFFSET FILESIZE
+
+next i
+
+endfunction

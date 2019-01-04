@@ -1,0 +1,16 @@
+# Bomberman Hardball - MRG Extractor
+# Written by Random Talking Bush
+
+endian little
+get MGFD long
+get version long
+get files long
+get unknown long
+for i = 1 to files
+getdstring name 0x10
+get offset long
+get size long
+get unknown long
+get size2 long
+log name offset size
+next i

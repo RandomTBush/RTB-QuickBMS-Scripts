@@ -1,0 +1,14 @@
+# Mainichi Compile Heart De-XORer by Random Talking Bush
+# ...I really don't need credit for this sorta thing. It's just a simple XOR. Too easy.
+
+goto -0x01 0 SEEK_END
+get XORByte byte
+FileXOR XORByte 0
+goto -0x09 0 SEEK_END
+getdstring EXTENSION 0x08
+get SIZE asize
+math SIZE - 9
+get NAME BASENAME
+string NAME + .
+string NAME + EXTENSION
+log NAME 0 SIZE 0

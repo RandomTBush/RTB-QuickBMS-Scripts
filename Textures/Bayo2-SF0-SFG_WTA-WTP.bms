@@ -1,0 +1,79 @@
+# Bayonetta 2 - WTA/WTP to GTX Converter
+# Written by Random Talking Bush
+
+endian big
+
+get WTAFILENAME basename
+string WTAFILENAME += .wta
+get WTPFILENAME basename
+string WTPFILENAME += .wtp
+
+open FDSE WTAFILENAME 0
+open FDSE WTPFILENAME 1
+
+idstring "\x00\x42\x54\x57"
+get UNKNOWN long 0
+get FILETOTAL long 0
+get OFFSET1 long 0
+get OFFSET2 long 0
+get OFFSET3 long 0
+get OFFSET4 long 0
+get OFFSET5 long 0
+get OFFSET6 long 0
+goto OFFSET1 0
+
+for i = 0 < FILETOTAL
+
+get FILESTART[i] long 0
+
+next i
+
+for i = 0 < FILETOTAL
+
+goto OFFSET5 0
+goto 0x20 0 SEEK_CUR 0
+get FILESIZE[i] long 0
+
+log MEMORY_FILE 0 0
+
+set MEMORY_FILE binary "\x47\x66\x78\x32\x00\x00\x00\x20\x00\x00\x00\x07\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x42\x4C\x4B\x7B\x00\x00\x00\x20\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x0B\x00\x00\x00\x9C\x00\x00\x00\x00\x00\x00\x00\x00"
+
+append
+log MEMORY_FILE OFFSET5 0x9C 0
+append
+
+set MEMORY_FILE2 binary "\x42\x4C\x4B\x7B\x00\x00\x00\x20\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x0C\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+append
+log MEMORY_FILE 0 0x20 MEMORY_FILE2 0
+append
+
+putVarChr MEMORY_FILE 0x50 0x00000001 long
+putVarChr MEMORY_FILE 0xF0 FILESIZE[i] long
+
+append
+log MEMORY_FILE FILESTART[i] FILESIZE[i] 1
+append
+
+set MEMORY_FILE3 binary "\x42\x4C\x4B\x7B\x00\x00\x00\x20\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+append
+log MEMORY_FILE 0 0x20 MEMORY_FILE3 0
+append
+
+get SIZE asize MEMORY_FILE
+get NAME basename
+
+if FILETOTAL > 1
+string NAME + _
+string NAME + i
+endif
+
+string NAME + .gtx
+log NAME 0 SIZE MEMORY_FILE
+
+math OFFSET5 += 0xC0
+
+next i
+
+endfunction

@@ -1,0 +1,90 @@
+# Nintendo Wii U (Breath of the Wild only) / Nintendo Switch - BARS Extractor
+# Written by Random Talking Bush
+
+endian little
+
+idstring "BARS"
+
+goto 0x08
+
+get MAINENDIAN short
+
+if MAINENDIAN = 0xFFFE
+endian big
+elif MAINENDIAN = 0xFEFF
+endian little
+endif
+
+goto 0x04
+get BARSSIZE long
+
+goto 0x0A
+get UNKNOWN short
+get FILECOUNT long
+
+for i = 0 < FILECOUNT
+
+get HASH long
+
+next i
+
+for i = 0 < FILECOUNT
+
+	if MAINENDIAN = 0xFFFE
+	endian big
+	elif MAINENDIAN = 0xFEFF
+	endian little
+	endif
+
+	get HEADERSTART long
+	get FILESTART long
+	savepos BACKUP
+
+	if FILESTART != 0xFFFFFFFF
+
+	goto FILESTART
+	goto 0x04 0 SEEK_CUR
+	endian little
+	get FWAVENDIAN short
+	if FWAVENDIAN = 0xFFFE
+	endian big
+	elif FWAVENDIAN = 0xFEFF
+	endian little
+	endif
+	goto 0x06 0 SEEK_CUR
+	get FILESIZE long
+	
+	else
+	math FILESTART = 0
+	math FILESIZE = 0
+	endif
+
+	goto HEADERSTART
+	goto 0x04 0 SEEK_CUR
+	endian little
+	get AMTAENDIAN short
+
+	if AMTAENDIAN = 0xFFFE
+	endian big
+	elif AMTAENDIAN = 0xFEFF
+	endian little
+	endif
+
+	goto 0x12 0 SEEK_CUR
+	get STRGSTART long
+	math STRGSTART + HEADERSTART
+	math STRGSTART + 0x08
+	goto STRGSTART
+	get FWAVNAME string
+
+	get NAME basename
+	string NAME + \
+	string NAME + FWAVNAME
+	string NAME + .bfwav
+	log NAME FILESTART FILESIZE
+	
+	goto BACKUP
+
+next i
+
+endfunction

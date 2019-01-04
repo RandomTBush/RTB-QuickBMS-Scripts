@@ -1,0 +1,210 @@
+# Touch My Katamari - NUT to GXT/DDS Converter
+# Written by Random Talking Bush
+
+endian little
+
+get NTVI long
+get VERSION byte
+get UNKNOWN byte
+
+get FILETOTAL short
+goto 0x10
+
+for i = 0 < FILETOTAL
+
+endian little
+
+get NAME basename
+
+get FULLSIZE long
+get BLANK long
+get SIZE long
+math GXTSIZE = SIZE
+get HEADERSIZE short
+get UNKNOWN short
+
+get UNKNOWN byte
+get UNKNOWN byte
+get UNKNOWN byte
+get GXTFORMAT byte
+get WIDTH short
+get HEIGHT short
+get MIPMAPS long
+get BLANK long
+
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+
+if HEADERSIZE == 0x60
+get MIPSIZE long
+get UNKNOWN short
+get UNKNOWN short
+get BLANK long
+get BLANK long
+endif
+
+if HEADERSIZE == 0x70
+get MIPSIZE long
+get UNKNOWN short
+get UNKNOWN short
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+endif
+
+if HEADERSIZE == 0x80
+get MIPSIZE long
+get UNKNOWN short
+get UNKNOWN short
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+endif
+
+if HEADERSIZE == 0x90
+get MIPSIZE long
+get UNKNOWN short
+get UNKNOWN short
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+endif
+
+get eXt long
+get UNKNOWN20 long
+get UNKNOWN10 long
+get BLANK long
+
+get GIDX long
+get UNKNOWN10 long
+get TEXINDEX byte
+get TEXSUBGROUP byte
+get TEXGROUP byte
+get TEXCLASS byte
+get BLANK long
+
+string NAME += _
+string NAME += TEXCLASS
+string NAME += _
+string NAME += TEXGROUP
+string NAME += _
+string NAME += TEXSUBGROUP
+string NAME += _
+string NAME += TEXINDEX
+
+savepos OFFSET
+
+log MEMORY_FILE 0 0
+
+set MEMORY_FILE binary "\x47\x58\x54\x00\x03\x00\x00\x10\x01\x00\x00\x00\x40\x00\x00\x00\x00\x40\x15\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\xFF\xFF\xFF\xFF\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x85\x00\x00\x00\x00\x01\x00\x00\x00"
+
+append
+log MEMORY_FILE OFFSET SIZE
+append
+
+
+set SQUARE 0
+
+if HEIGHT = 8 or HEIGHT = 16
+math SQUARE + 1
+endif
+
+if HEIGHT = 32 or HEIGHT = 64
+math SQUARE + 1
+endif
+
+if HEIGHT = 128 or HEIGHT = 256
+math SQUARE + 1
+endif
+
+if HEIGHT = 512 or HEIGHT = 1024
+math SQUARE + 1
+endif
+
+if WIDTH = 8 or WIDTH = 16
+math SQUARE + 1
+endif
+
+if WIDTH = 32 or WIDTH = 64
+math SQUARE + 1
+endif
+
+if WIDTH = 128 or WIDTH = 256
+math SQUARE + 1
+endif
+
+if WIDTH = 512 or WIDTH = 1024
+math SQUARE + 1
+endif
+
+if GXTFORMAT = 1
+putVarChr MEMORY_FILE 0x37 0x86 byte
+endif
+
+if GXTFORMAT = 2
+putVarChr MEMORY_FILE 0x37 0x87 byte
+endif
+
+if GXTFORMAT = 14
+putVarChr MEMORY_FILE 0x33 0x60 byte
+putVarChr MEMORY_FILE 0x35 0x10 byte
+putVarChr MEMORY_FILE 0x37 0x0C byte
+endif
+
+if GXTFORMAT = 17
+putVarChr MEMORY_FILE 0x33 0x60 byte
+putVarChr MEMORY_FILE 0x35 0x10 byte
+putVarChr MEMORY_FILE 0x37 0x0C byte
+endif
+
+if GXTFORMAT = 25
+putVarChr MEMORY_FILE 0x33 0x60 byte
+putVarChr MEMORY_FILE 0x35 0x10 byte
+putVarChr MEMORY_FILE 0x37 0x98 byte
+endif
+
+if SQUARE = 2
+putVarChr MEMORY_FILE 0x33 0x00 byte
+endif
+
+putVarChr MEMORY_FILE 0x10 SIZE long
+putVarChr MEMORY_FILE 0x24 SIZE long
+putVarChr MEMORY_FILE 0x3A HEIGHT short
+putVarChr MEMORY_FILE 0x38 WIDTH short
+
+get GXTSIZE asize MEMORY_FILE
+string NAME + .gxt
+
+log NAME 0 GXTSIZE MEMORY_FILE
+
+math OFFSET + SIZE
+goto OFFSET
+
+next i
+
+endif
+
+endfunction

@@ -1,0 +1,25 @@
+# NES Remix - VEWArc Extractor
+# Written by Random Talking Bush
+
+endian big
+
+get FILETOTAL long
+
+for i = 0 < FILETOTAL
+get FILEHEADER[i] long
+next i
+
+get VEWSTART long
+
+for i = 0 < FILETOTAL
+goto FILEHEADER[i]
+get FILESTART long
+math FILESTART += VEWSTART
+get FILESIZE long
+get NAMELENGTH long
+get NAME string
+log NAME FILESTART FILESIZE
+next i
+
+
+endfunction

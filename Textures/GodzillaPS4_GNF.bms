@@ -1,0 +1,73 @@
+# Godzilla (PS4) - GNF Extractor
+# Written by Random Talking Bush
+
+endian little
+
+get NAME basename
+string NAME + .gnf
+
+goto 0x38
+get OFFJUMP long
+goto 0x50
+get DDSSIZE long
+
+goto 0xD4E
+get NAMEJUMP short
+math NAMEJUMP + 0xDC0
+
+goto NAMEJUMP
+get WIDTH long
+get HEIGHT long
+
+math OFFJUMP + 0xDBD
+goto OFFJUMP
+endian big
+get FORMAT long
+endian little
+math OFFJUMP + 0x30
+
+log MEMORY_FILE 0 0
+
+set MEMORY_FILE binary "\x47\x4E\x46\x20\x28\x00\x00\x00\x02\x01\x00\x00\x30\x00\x10\x00\x00\x00\x00\x00\x01\x00\x00\x92\xFF\xC3\xFF\x70\xAC\x0F\xD0\xA4\x01\xE0\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00"
+
+endian little
+
+math WIDTH - 1
+math WIDTH + 0xC000
+math HEIGHT - 1
+math HEIGHT > 2
+math HEIGHT + 0x7000
+set FILESIZE2 FILESIZE
+math FILESIZE2 + 0x30
+
+putVarChr MEMORY_FILE 0x18 WIDTH short
+putVarChr MEMORY_FILE 0x1A HEIGHT short
+putVarChr MEMORY_FILE 0x2C FILESIZE long
+putVarChr MEMORY_FILE 0x0C FILESIZE2 long
+
+if FORMAT = 0x44585431
+print "DXT1"
+putVarChr MEMORY_FILE 0x16 0x30 byte
+elif FORMAT = 0x44585433
+print "DXT3"
+putVarChr MEMORY_FILE 0x16 0x40 byte
+elif FORMAT = 0x44585435
+print "DXT5"
+putVarChr MEMORY_FILE 0x16 0x50 byte
+elif FORMAT = 0x41524742
+print "RGBA32"
+putVarChr MEMORY_FILE 0x16 0xA0 byte
+putVarChr MEMORY_FILE 0x17 0x24 byte
+putVarChr MEMORY_FILE 0x1C 0x2E byte
+math OFFJUMP + 0x01
+else
+print "UNKNOWN FORMAT! %FORMAT%"
+cleanexit
+endif
+
+append
+log MEMORY_FILE OFFJUMP DDSSIZE
+append
+
+get DDSSIZE asize MEMORY_FILE
+log NAME 0 DDSSIZE MEMORY_FILE

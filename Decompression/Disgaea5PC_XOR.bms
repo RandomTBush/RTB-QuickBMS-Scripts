@@ -1,0 +1,35 @@
+# Disgaea 5 Complete (PC) - De-XORer
+# Written by Random Talking Bush
+# Yes, it'll take a while to unscramble the DAT files.
+# Let it run, have some curry and watch a video or something, dood.
+
+endian little
+get DATSIZE asize
+
+FileXOR 0xF0 0
+append
+log MEMORY_FILE 0x0 DATSIZE 0
+append
+
+FileXOR 0x0 0
+print "Decrypting - please wait, dood."
+
+for x = 0 < DATSIZE
+
+# Something related to byte rotation doesn't quite work as it should, so this works instead.
+GetVarChr BYTESWAP MEMORY_FILE x byte
+GetVarChr BYTESWAP2 MEMORY_FILE x byte
+math BYTESWAP & 0x0F
+math BYTESWAP2 & 0xF0
+math BYTESWAP << 4
+math BYTESWAP2 >> 4
+math BYTESWAP + BYTESWAP2
+PutVarChr MEMORY_FILE x BYTESWAP byte
+
+next x
+
+get SIZE asize MEMORY_FILE
+get NAME basename
+string NAME + "_deXOR.dat"
+
+log NAME 0 SIZE MEMORY_FILE

@@ -1,0 +1,12 @@
+# Senran Kagura: Peach Ball - File Decompression
+# Written by Random Talking Bush
+
+endian little
+comtype COMP_UNZIP_DYNAMIC
+
+idstring "PZZEcat\x00"
+get SIZE long
+get ZSIZE asize
+math ZSIZE -= 24
+get NAME basename
+clog NAME 24 ZSIZE SIZE

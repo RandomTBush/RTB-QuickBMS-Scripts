@@ -1,0 +1,43 @@
+# Hyrule Warriors - SFX Extractor
+# You must crop the files down to the "SDsdSmpl" header for this to work!
+# Written by Random Talking Bush
+
+endian little
+goto 0
+savepos OFFTABLE
+get SDsd long
+get Smpl long
+get SOUNDSTART long
+get FILES long
+
+math SOUNDSTART += OFFTABLE
+math SOUNDSTART += 0x0C
+
+endian big
+
+for i = 0 < FILES
+	get UNKNOWN long
+    get OFFSTART long
+	get UNKNOWN long
+	get UNKNOWN long
+	get UNKNOWN long
+	get UNKNOWN long
+	get UNKNOWN long
+	get UNKNOWN long
+	get UNKNOWN long
+	get UNKNOWN long
+    get FILESIZE long
+	get UNKNOWN long
+	get FILENUM long
+	get UNKNOWN long
+	get UNKNOWN long
+	get UNKNOWN long
+	
+	math OFFSTART + SOUNDSTART
+	get NAME basename
+	string NAME += _
+	string NAME += FILENUM
+	string NAME += .g1l
+	
+    log NAME OFFSTART FILESIZE
+next i

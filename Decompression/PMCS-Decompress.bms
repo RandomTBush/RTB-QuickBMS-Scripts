@@ -1,0 +1,14 @@
+# Paper Mario: Color Splash - File Decompression
+# Written by Random Talking Bush
+
+endian little
+comtype COMP_LZ77WII_RAW11
+
+get ZSIZE asize
+math ZSIZE - 16
+goto 4
+get SIZE long
+get NAME basename
+clog NAME 16 ZSIZE SIZE
+
+endfunction

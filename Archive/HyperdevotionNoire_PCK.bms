@@ -1,0 +1,47 @@
+# Hyperdevotion Noire - PCK Extractor
+# Written by Random Talking Bush
+
+idstring File
+get ID long
+get FILESTART long
+set TABLEEND 0
+set FILECOUNT 0
+
+Do
+
+get FILENAMESTART long
+math FILENAMESTART += 12
+
+savepos OFFSET
+goto FILENAMESTART 
+get FILENAME string
+putarray 0 FILECOUNT FILENAME
+savepos TABLEEND
+
+goto OFFSET
+math FILECOUNT + 1
+
+while TABLEEND < FILESTART
+
+goto FILESTART
+
+padding 4
+
+get ID1 long
+get ID2 long
+get PACKSTART long
+get FILECOUNT long
+
+for i = 0 < FILECOUNT
+get PACKFILESTART long
+get PACKFILESIZE long
+
+getarray FILENAME 0 i
+get NAME basename
+string NAME + \
+string NAME + FILENAME
+
+log NAME PACKFILESTART PACKFILESIZE
+next i
+
+endfunction

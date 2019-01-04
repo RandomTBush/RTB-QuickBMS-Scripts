@@ -1,0 +1,73 @@
+# Super Heroine Chronicle / Godzilla (PS3) - DDS Extractor
+# Written by Random Talking Bush
+
+endian big
+
+get NAME basename
+string NAME + .dds
+
+goto 0x38
+get OFFJUMP long
+goto 0x48
+get DDSSIZE long
+
+math OFFJUMP + 0xE11
+goto OFFJUMP
+get WIDTH short
+get HEIGHT short
+
+math OFFJUMP + 0x6F
+goto OFFJUMP
+get FORMAT long
+math OFFJUMP + 0x2A
+
+log MEMORY_FILE 0 0
+
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x04\x00\x00\x00\x44\x58\x54\x31\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+endian little
+
+putVarChr MEMORY_FILE 0x0C HEIGHT long
+putVarChr MEMORY_FILE 0x10 WIDTH long
+
+if FORMAT = 0x44585431
+set WRITE 1
+endif
+
+if FORMAT = 0x44585433
+putVarChr MEMORY_FILE 0x57 0x33 byte
+set WRITE 1
+endif
+
+if FORMAT = 0x44585435
+putVarChr MEMORY_FILE 0x57 0x35 byte
+set WRITE 1
+endif
+
+if FORMAT = 0x41524742
+putVarChr MEMORY_FILE 0x50 0x41 byte
+putVarChr MEMORY_FILE 0x54 0x00 byte
+putVarChr MEMORY_FILE 0x55 0x00 byte
+putVarChr MEMORY_FILE 0x56 0x00 byte
+putVarChr MEMORY_FILE 0x57 0x00 byte
+putVarChr MEMORY_FILE 0x58 0x20 long
+endian big
+putVarChr MEMORY_FILE 0x5C 0x0000FF00 long
+putVarChr MEMORY_FILE 0x60 0x00FF0000 long
+putVarChr MEMORY_FILE 0x64 0xFF000000 long
+putVarChr MEMORY_FILE 0x68 0x000000FF long
+endian little
+math OFFJUMP + 0x01
+set WRITE 1
+endif
+
+append
+log MEMORY_FILE OFFJUMP DDSSIZE
+append
+
+if WRITE = 1
+get DDSSIZE asize MEMORY_FILE
+log NAME 0 DDSSIZE MEMORY_FILE
+endif
+
+endfunction

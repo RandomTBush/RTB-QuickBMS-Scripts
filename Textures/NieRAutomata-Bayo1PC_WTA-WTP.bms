@@ -1,0 +1,47 @@
+# NieR: Automata / Bayonetta 1 (PC) - WTA/WTP to DDS Converter
+# Written by Random Talking Bush
+
+get WTAFILENAME basename
+string WTAFILENAME += .wta
+get WTPFILENAME basename
+string WTPFILENAME += .wtp
+
+open FDSE WTAFILENAME 0
+open FDSE WTPFILENAME 1
+
+idstring "\x57\x54\x42\x00"
+
+endian little
+
+get UNKNOWN long 0
+get FILETOTAL long 0
+get FILESTARTOFFSET long 0
+get FILESIZEOFFSET long 0
+
+goto FILESTARTOFFSET 0
+
+for i = 0 < FILETOTAL
+
+get FILESTART[i] long 0
+
+next i
+
+goto FILESIZEOFFSET 0
+
+for i = 0 < FILETOTAL
+
+get FILESIZE long 0
+
+get NAME basename
+
+if FILETOTAL > 1
+string NAME + _
+string NAME + i
+endif
+
+string NAME + .dds
+log NAME FILESTART[i] FILESIZE 1
+
+next i
+
+endfunction

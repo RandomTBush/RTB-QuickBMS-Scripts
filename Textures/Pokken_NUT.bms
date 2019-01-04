@@ -1,0 +1,194 @@
+# Pokkén Tournament (Pokémon Tekken) - NUT to DDS Converter
+# Written by Random Talking Bush
+
+endian little
+
+get NTWD long
+get VERSION byte
+get UNKNOWN byte
+
+if NTWD = 0x3350544E
+endian big
+endif
+
+get FILETOTAL short
+goto 0x10
+
+math PADDINGFIX = 0
+
+for i = 0 < FILETOTAL
+
+if NTWD = 0x4457544E
+endian little
+endif
+
+if i > 0
+math PADDINGFIX += HEADERSIZE
+endif
+
+get NAME basename
+
+get FULLSIZE long
+get BLANK long
+get SIZE long
+math DDSSIZE = SIZE
+get HEADERSIZE short
+get UNKNOWN short
+
+get UNKNOWN byte
+get UNKNOWN byte
+get UNKNOWN byte
+get DDSFORMAT byte
+if NTWD = 0x4457544E
+get WIDTH1 byte
+get WIDTH2 byte
+get HEIGHT1 byte
+get HEIGHT2 byte
+endif
+if NTWD = 0x3350544E
+get WIDTH2 byte
+get WIDTH1 byte
+get HEIGHT2 byte
+get HEIGHT1 byte
+endif
+get MIPMAPS long
+get BLANK long
+get OFFSET1 long
+math OFFSET1 += 16
+get OFFSET2 long
+math OFFSET2 += 16
+get OFFSET3 long
+math OFFSET3 += 16
+get BLANK long
+
+if NTWD = 0x3350544E
+math OFFSET1 += 80
+math OFFSET2 += 80
+math OFFSET3 += 80
+endif
+
+if HEADERSIZE == 0x60
+get SIZE long
+get UNKNOWN short
+get UNKNOWN short
+get BLANK long
+get BLANK long
+endif
+
+if HEADERSIZE == 0x70
+get SIZE long
+get UNKNOWN short
+get UNKNOWN short
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+endif
+
+if HEADERSIZE == 0x80
+get SIZE long
+get UNKNOWN short
+get UNKNOWN short
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+endif
+
+if HEADERSIZE == 0x90
+get SIZE long
+get UNKNOWN short
+get UNKNOWN short
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+endif
+
+get eXt long
+get UNKNOWN20 long
+get UNKNOWN10 long
+get BLANK long
+get GIDX long
+get UNKNOWN10 long
+get TEXINDEX byte
+get TEXSUBGROUP byte
+get TEXGROUP byte
+get TEXCLASS byte
+get BLANK long
+
+string NAME += _
+string NAME += TEXCLASS
+string NAME += _
+string NAME += TEXGROUP
+string NAME += _
+string NAME += TEXSUBGROUP
+string NAME += _
+string NAME += TEXINDEX
+
+endian big
+
+log MEMORY_FILE 0 0
+
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x04\x00\x00\x00\x44\x58\x54\x31\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+if DDSFORMAT == 1
+putVarChr MEMORY_FILE 0x57 0x33 byte
+endif
+
+if DDSFORMAT == 2
+putVarChr MEMORY_FILE 0x57 0x35 byte
+endif
+
+if DDSFORMAT == 14
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x41\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\xFF\x00\x00\x00\x08\x10\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+endif
+
+if DDSFORMAT == 21
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x41\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x08\x10\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+endif
+
+if DDSFORMAT == 47
+putVarChr MEMORY_FILE 0x54 0x41544931 long
+endif
+
+if i > 0
+math OFFSET1 += PADDINGFIX
+endif
+
+append
+log MEMORY_FILE OFFSET1 DDSSIZE
+append
+
+putVarChr MEMORY_FILE 0x0C HEIGHT1 byte
+putVarChr MEMORY_FILE 0x0D HEIGHT2 byte
+putVarChr MEMORY_FILE 0x10 WIDTH1 byte
+putVarChr MEMORY_FILE 0x11 WIDTH2 byte
+
+get DDSSIZE asize MEMORY_FILE
+string NAME + .dds
+log NAME 0 DDSSIZE MEMORY_FILE
+
+next i
+
+endif
+
+endfunction

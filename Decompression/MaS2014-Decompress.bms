@@ -1,0 +1,15 @@
+# Mario & Sonic at the Sochi 2014 Olympic Winter Games - File Decompression
+# Written by Random Talking Bush
+
+endian big
+comtype COMP_GZIP
+
+idstring ZLIB
+get SIZE long
+get ZSIZE asize
+math ZSIZE -= 64
+get NAME filename
+string NAME += .dec
+clog NAME 64 ZSIZE ZSIZE
+
+endfunction

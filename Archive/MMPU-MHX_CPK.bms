@@ -1,0 +1,16 @@
+# Mega Man Powered Up / Mega Man: Maverick Hunter X - CPK Decompression
+# Written by Random Talking Bush
+
+endian little
+comtype COMP_PUYO_LZ01
+
+idstring CPK0
+get ZSIZE long
+get SIZE long
+get BLANK long
+math ZSIZE -= 16
+
+get NAME basename
+clog NAME 16 ZSIZE SIZE
+
+endfunction

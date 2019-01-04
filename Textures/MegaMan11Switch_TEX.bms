@@ -1,0 +1,377 @@
+# Mega Man 11 (Switch) - TEX to DDS Converter
+# Written by Random Talking Bush
+
+endian little
+
+idstring "TEX\x00"
+
+log MEMORY_FILE 0 0
+log MEMORY_FILE2 0 0
+log MEMORY_FILE3 0 0
+log MEMORY_FILE4 0 0
+
+set BITPERPIX 4
+set BLOCKSIZE 512
+set ISCOMPRESSED 1
+set TEXFIX 0
+set TEXCROP 0
+
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x0A\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x04\x00\x00\x00\x44\x58\x54\x31\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+goto 0x08 SEEK_SET
+get DATABLOCK long
+goto 0x0D SEEK_SET
+get FORMAT byte
+goto 0x10 SEEK_SET
+
+if FORMAT = 0x07
+set BITPERPIX 32
+set BLOCKSIZE 128
+set ISCOMPRESSED 0
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x41\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x08\x10\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+print "R8G8B8A8_UNORM TEXTURE (0x07)"
+
+elif FORMAT = 0x13
+set BITPERPIX 4
+set BLOCKSIZE 512
+print "BC1_UNORM / DXT1 TEXTURE (0x13)"
+
+elif FORMAT = 0x15
+set BITPERPIX 8
+set BLOCKSIZE 512
+putVarChr MEMORY_FILE 0x57 0x33 byte
+print "BC2_UNORM / DXT3 TEXTURE (0x15)"
+
+elif FORMAT = 0x19
+set BITPERPIX 4
+set BLOCKSIZE 512
+putVarChr MEMORY_FILE 0x54 0x31495441 long
+print "BC4_UNORM / ATI1 TEXTURE (0x19)"
+
+elif FORMAT = 0x1F
+set BITPERPIX 8
+set BLOCKSIZE 512
+putVarChr MEMORY_FILE 0x54 0x32495441 long
+print "BC5_UNORM / ATI2 TEXTURE (0x1F)"
+
+elif FORMAT = 0x20
+print "CUBEMAP TEXTURE? (0x20), skipping"
+exit
+
+elif FORMAT = 0x2A
+set BITPERPIX 8
+set BLOCKSIZE 512
+putVarChr MEMORY_FILE 0x57 0x35 byte
+print "BC3_UNORM / DXT5 TEXTURE (0x2A)"
+
+elif FORMAT = 0x30
+set BITPERPIX 8
+set BLOCKSIZE 512
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x0A\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x04\x00\x00\x00\x44\x58\x31\x30\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x62\x00\x00\x00\x03\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00"
+print "BC7_UNORM TEXTURE (0x30)"
+else
+
+print "UNKNOWN FORMAT (%FORMAT%)"
+exit
+endif
+
+get DDSSIZE long
+set MIPCOUNT DATABLOCK
+set WIDTH DATABLOCK
+set HEIGHT DATABLOCK
+math MIPCOUNT & 0x0000003F
+math WIDTH & 0x0007FFC0
+math WIDTH > 6
+math HEIGHT & 0xFFF80000
+math HEIGHT > 19
+
+for i = 0 < MIPCOUNT
+get MIPOFFSET long
+next i
+
+savepos DDSSTART
+
+math ACTUALWIDTH = WIDTH
+math ACTUALHEIGHT = HEIGHT
+
+if ISCOMPRESSED = 1
+	if BITPERPIX = 4
+		math WIDTH x 32
+	elif BITPERPIX = 8
+		math WIDTH x 16
+	endif
+else
+	if BITPERPIX = 4
+		math WIDTH x 128
+	elif BITPERPIX = 8
+		math WIDTH x 64
+	elif BITPERPIX = 16
+		math WIDTH x 32
+	elif BITPERPIX = 32
+		math WIDTH x 16
+	endif
+endif
+
+if HEIGHT < 32
+set HEIGHT 32
+elif HEIGHT > 32 && HEIGHT < 64
+set HEIGHT 64
+elif HEIGHT > 64 && HEIGHT < 128
+set HEIGHT 128
+elif HEIGHT > 128 && HEIGHT < 256
+set HEIGHT 256
+elif HEIGHT > 256 && HEIGHT < 512
+set HEIGHT 512
+elif HEIGHT > 512 && HEIGHT < 1024
+set HEIGHT 1024
+elif HEIGHT > 1024 && HEIGHT < 2048
+set HEIGHT 2048
+elif HEIGHT > 2048 && HEIGHT < 4096
+set HEIGHT 4096
+elif HEIGHT > 4096 && HEIGHT < 8192
+set HEIGHT 8192
+endif
+
+# I really need to troubleshoot the crap outta this.
+
+if ISCOMPRESSED = 1
+	if ACTUALHEIGHT > 32 and ACTUALHEIGHT <= 40
+	set TEXFIX 1
+	endif
+
+	if ACTUALHEIGHT > 64 and ACTUALHEIGHT <= 84
+	set TEXFIX 1
+	endif
+
+	if ACTUALHEIGHT > 128 and ACTUALHEIGHT <= 168
+	set TEXFIX 1
+	endif
+
+	if ACTUALHEIGHT > 256 and ACTUALHEIGHT <= 340
+	set TEXFIX 1
+	endif
+endif
+
+if ISCOMPRESSED = 0 and BITPERPIX = 32
+	if ACTUALHEIGHT > 8 and ACTUALHEIGHT <= 10
+	set TEXFIX 1
+	endif
+
+	if ACTUALHEIGHT > 16 and ACTUALHEIGHT <= 22
+	set TEXFIX 1
+	endif
+
+	if ACTUALHEIGHT > 32 and ACTUALHEIGHT <= 42
+	set TEXFIX 1
+	endif
+
+	if ACTUALHEIGHT > 64 and ACTUALHEIGHT <= 84
+	set TEXFIX 1
+	endif
+endif
+
+if ACTUALWIDTH = WIDTH
+set ADDDIMENSIONS 0
+else
+set ADDDIMENSIONS 1
+endif
+
+get PATH basename
+	if ADDDIMENSIONS = 1
+	string PATH += "("
+	string PATH += ACTUALWIDTH
+	string PATH += "-"
+	string PATH += ACTUALHEIGHT
+	string PATH += ")"
+	endif
+string PATH + .dds
+
+set PIXOFFS 0
+set PIXOFFSTART 0
+set BLOCKNUM 0
+set BLOCKS 1
+
+if HEIGHT > BLOCKSIZE
+math BLOCKS = HEIGHT
+math BLOCKS / BLOCKSIZE
+endif
+
+math MIPSIZE = WIDTH
+math MIPSIZE * HEIGHT
+math MIPSIZE * BITPERPIX
+math MIPSIZE / 8
+math NEXTBLOCK = HEIGHT
+if ISCOMPRESSED = 1
+math NEXTBLOCK * 16
+else
+math NEXTBLOCK * 64
+endif
+math BLOCKEND = HEIGHT
+if ISCOMPRESSED = 1
+math BLOCKEND * 16
+if TEXFIX = 1
+math BLOCKEND / 2
+endif
+else
+math BLOCKEND * 64
+endif
+
+if TEXFIX = 1
+math NEXTBLOCK / 2
+endif
+math NEXTBLOCK - 0x100
+
+if NEXTBLOCK < 0
+set NEXTBLOCK 0
+endif
+
+get DDSSIZE asize
+math DDSSIZE - DDSSTART
+log MEMORY_FILE2 DDSSTART DDSSIZE
+
+append
+# Just to make sure we have enough "padding".
+log MEMORY_FILE2 DDSSTART DDSSIZE
+append
+
+endian little
+putVarChr MEMORY_FILE 0x0C ACTUALHEIGHT short
+putVarChr MEMORY_FILE 0x10 WIDTH short
+putVarChr MEMORY_FILE 0x14 MIPSIZE long
+endian big
+
+math DATAEND = NEXTBLOCK
+math DATAEND / BLOCKS
+
+# Don't ask how this is all done, it's pretty much held together with duct tape.
+
+Do
+
+math PIXOFFS = PIXOFFSTART
+
+Do
+
+for l = 0 < BLOCKS
+
+if l > 0
+math PIXOFFS - 0x100
+math PIXOFFS + 0x2000
+endif
+
+append
+log MEMORY_FILE3 PIXOFFS 0x10 MEMORY_FILE2
+math PIXOFFS + 0x20
+log MEMORY_FILE3 PIXOFFS 0x10 MEMORY_FILE2
+math PIXOFFS - 0x20
+append
+
+math PIXOFFS + 0x100
+
+append
+log MEMORY_FILE3 PIXOFFS 0x10 MEMORY_FILE2
+math PIXOFFS + 0x20
+log MEMORY_FILE3 PIXOFFS 0x10 MEMORY_FILE2
+math PIXOFFS - 0x20
+append
+
+if l = 0
+math PIXRET = PIXOFFS
+endif
+
+next l
+
+math PIXOFFS = PIXRET
+math PIXOFFS + NEXTBLOCK
+
+while PIXOFFS < MIPSIZE
+
+math BLOCKNUM + 1
+
+if BLOCKNUM = 1
+math PIXOFFSTART + 0x10
+elif BLOCKNUM = 2
+math PIXOFFSTART + 0x30
+elif BLOCKNUM = 3
+math PIXOFFSTART + 0x10
+elif BLOCKNUM = 4
+math PIXOFFSTART + 0x30
+elif BLOCKNUM = 5
+math PIXOFFSTART + 0x10
+elif BLOCKNUM = 6
+math PIXOFFSTART + 0x30
+elif BLOCKNUM = 7
+math PIXOFFSTART + 0x10
+elif BLOCKNUM = 8
+math PIXOFFSTART + 0x130
+set BLOCKNUM 0
+endif
+
+while PIXOFFSTART < DATAEND
+
+if BLOCKS > 1 or ISCOMPRESSED = 0 or TEXFIX = 1
+
+if ISCOMPRESSED = 1
+math HEIGHTSPLIT = HEIGHT
+math HEIGHTSPLIT / 4
+math HEIGHTSPLIT / BLOCKS
+math LINESIZE = WIDTH
+math LINESIZE * BITPERPIX
+math LINESIZE / 2
+if TEXFIX = 1
+set BLOCKS 2
+math HEIGHTSPLIT / 2
+endif
+else
+math HEIGHTSPLIT = HEIGHT
+if TEXFIX = 1
+set BLOCKS 2
+endif
+math HEIGHTSPLIT / BLOCKS
+math LINESIZE = WIDTH
+math LINESIZE * BITPERPIX
+math LINESIZE / 8
+endif
+
+for k = 0 < BLOCKS
+math LINESTART = LINESIZE
+math LINESTART * k
+
+for l = 0 < HEIGHTSPLIT
+
+append
+log MEMORY_FILE4 LINESTART LINESIZE MEMORY_FILE3
+append
+
+for m = 0 < BLOCKS
+math LINESTART + LINESIZE
+next m
+
+next l
+
+next k
+
+get TEXSIZE asize MEMORY_FILE4
+
+append
+log MEMORY_FILE 0 TEXSIZE MEMORY_FILE4
+append
+
+else
+
+get TEXSIZE asize MEMORY_FILE3
+
+append
+log MEMORY_FILE 0 TEXSIZE MEMORY_FILE3
+append
+
+endif
+
+get SIZE asize MEMORY_FILE
+
+log PATH 0 SIZE MEMORY_FILE
+
+endian little
+
+cleanexit
+
+endif

@@ -1,0 +1,547 @@
+# Namco - DRP Extractor
+# Works with Pokkén Tournament (Pokémon Tekken), Taiko no Tatsujin Wii U and Touch My Katamari
+# File extensions are approximate, and may not be exact (or complete)
+# Written by Random Talking Bush
+
+endian big
+comtype unzip_dynamic
+
+goto 0x16
+get FILECOUNT short
+
+goto 0x60
+
+for i = 0 < FILECOUNT
+
+savepos OFFJUMP
+math OFFJUMP + 64
+get FILENAME string
+goto OFFJUMP
+
+get FILETYPEA short
+get FILETYPEB short
+get CHUNKSIZE long
+get UNKNOWN short
+get SUBFILES short
+get BLANK long
+
+get ZSIZEA long
+get ZSIZEB long
+get ZSIZEC long
+get ZSIZED long
+
+math ZSIZED - ZSIZEC
+math ZSIZEC - ZSIZEB
+math ZSIZEB - ZSIZEA
+
+for j = 0 < SUBFILES
+
+savepos NEXTFILE
+
+if j = 0
+math NEXTFILE + ZSIZEA
+math ZSIZEA - 4
+endif
+
+if j = 1
+math NEXTFILE + ZSIZEB
+math ZSIZEB - 4
+endif
+
+if j = 2
+math NEXTFILE + ZSIZEC
+math ZSIZEC - 4
+endif
+
+if j = 3
+math NEXTFILE + ZSIZED
+math ZSIZED - 4
+endif
+
+get SIZE long
+
+savepos FILESTART
+
+get NAME basename
+string NAME + \
+string NAME + FILENAME
+
+set FILETYPECHECK 0
+
+if FILETYPEA = 4096
+
+if FILETYPEB = 0 and j = 0
+string NAME + .nut
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 0 and j = 1
+string NAME + .nud
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 1
+string NAME + .nut
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 2
+string NAME + .nsh
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 3
+string NAME + .vbn
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 4
+string NAME + .omo
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 5
+string NAME + .hit
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 8
+string NAME + .oela
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 9
+string NAME + .nut
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 11 and SUBFILES > 1 
+if j = 0
+string NAME + .nut
+set FILETYPECHECK 1
+endif
+if j = 1
+string NAME + .nuf
+set FILETYPECHECK 1
+endif
+endif
+
+if FILETYPEB = 13 and j = 0
+string NAME + .nut
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 13 and j = 1
+string NAME + .lm
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 14
+string NAME + .rpc
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 17
+string NAME + .nus3bank
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 19
+string NAME + .nhb
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 20
+string NAME + .swb
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 24
+string NAME + .nsh
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 26
+string NAME + .nud
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 32 and j = 0
+string NAME + .nut
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 32 and j = 1
+string NAME + .nuf
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 33
+string NAME + .ntxb
+set FILETYPECHECK 1
+endif
+
+endif
+
+if FILETYPEA = 8192 # Taiko
+
+if FILETYPEB = 1
+string NAME + .xml
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 3 # hanko
+string NAME + .8192_3
+set FILETYPECHECK 1
+endif
+
+endif
+
+if FILETYPEA = 16384 # Pokken
+
+if FILETYPEB = 0 # stage_parameter / parts_info / path
+string NAME + .16384_0
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 1
+string NAME + .mhda
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 3
+string NAME + .yrda
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 7
+string NAME + .ikso
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 5
+string NAME + .sbin
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 8
+string NAME + .16384_8
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 9
+string NAME + .atkd
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 10
+string NAME + .atkh
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 11
+string NAME + .eyd
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 12 # eye_blink / eye_track
+string NAME + .16384_12
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 23
+string NAME + .face
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 24
+string NAME + .pbpa
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 25
+string NAME + .eft
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 26
+string NAME + .cyek
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 34
+string NAME + .bpt
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 35
+string NAME + .bcp
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 36
+string NAME + .bch
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 37
+string NAME + .bha
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 38
+string NAME + .bcl
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 39
+string NAME + .bcs
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 41
+string NAME + .bsp
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 46
+string NAME + .cpts
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 47
+string NAME + .tlt
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 49
+string NAME + .ccdt
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 50 # gameparam
+string NAME + .gapm
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 51 # mission_data
+string NAME + .16384_51.luar
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 52 # ?????
+string NAME + .16384_52.luar
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 53 # cheer_data
+string NAME + .16384_53.luar
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 54 # ranktable
+string NAME + .16384_54.luar
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 55 # shogo_preset
+string NAME + .spdb
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 56 # growpoint
+string NAME + .16384_56.luar
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 64 # camera_param
+string NAME + .16384_64
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 66 # camera_sequence
+string NAME + .cmsq
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 67 # camera_correct
+string NAME + .cmcr
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 80
+string NAME + .bcs
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 82
+string NAME + .bts
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 96 # stagering
+string NAME + .stgr
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 97 # fieldset
+string NAME + .fset
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 98 # fieldsetlist
+string NAME + .fstl
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 112 # energydata
+string NAME + .engy
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 113 # popcondition
+string NAME + .enpc
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 128
+string NAME + .shmb
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 129 # env_sound_position
+string NAME + .dpse
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 144 # stage_color_grading
+string NAME + .16384_144
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 176
+string NAME + .sbrd
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 192
+string NAME + .mifd
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 209
+string NAME + .npc
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 225 # avatar_introduction
+string NAME + .bavi
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 240 # reward_master
+string NAME + .rwmd
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 256 # achievement
+string NAME + .acid
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 273
+string NAME + .bca
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 288
+string NAME + .fssb
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 289 # skit_list
+string NAME + .16384_289
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 305 # comment_category
+string NAME + .ccdt
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 321 #action_list
+string NAME + .bacl
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 336 # lucky_bonus / reward_special_bonus
+string NAME + .16384_336
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 337 # league_reward_money
+string NAME + .16384_337
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 338 # league_reward_data
+string NAME + .16384_338
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 352 # staff_roll_data
+string NAME + .16384_352
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 368 # league_npc_table
+string NAME + .16384_368
+set FILETYPECHECK 1
+endif
+
+if FILETYPEB = 369 # npc_change_table
+string NAME + .16384_369
+set FILETYPECHECK 1
+endif
+
+endif
+
+if FILETYPEA = 28672 # Touch My Katamari
+
+if FILETYPEB = 3
+string NAME + .28672_3
+set FILETYPECHECK 1
+endif
+
+endif
+
+if FILETYPECHECK != 1
+string NAME + .
+string NAME + FILETYPEA
+string NAME + _
+string NAME + FILETYPEB
+endif
+
+if j = 0 and ZSIZEA > 0
+clog NAME FILESTART ZSIZEA ZSIZEA
+endif
+
+if j = 1 and ZSIZEB > 0
+clog NAME FILESTART ZSIZEB ZSIZEB
+endif
+
+if j = 2 and ZSIZEC > 0
+clog NAME FILESTART ZSIZEC ZSIZEC
+endif
+
+if j = 3 and ZSIZED > 0
+clog NAME FILESTART ZSIZED ZSIZED
+endif
+
+goto NEXTFILE
+
+next j
+
+next i
+
+endfunction

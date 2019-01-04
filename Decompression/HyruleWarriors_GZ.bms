@@ -1,0 +1,42 @@
+# Hyrule Warriors - GZ Decompression
+# Written by Random Talking Bush
+
+endian big
+comtype unzip_dynamic
+goto 0x04
+get FILETOTAL long
+goto 0x08
+
+log MEMORY_FILE 0 0
+get NAME BASENAME
+
+for i = 0 < FILETOTAL
+
+get SIZE long
+
+next i
+
+goto 4 0 SEEK_CUR
+
+padding 128
+
+savepos OFFSET
+
+for i = 0 < FILETOTAL
+
+get SIZE long
+savepos OFFSET
+append
+clog MEMORY_FILE OFFSET SIZE SIZE
+append
+math OFFSET += SIZE
+goto OFFSET
+padding 128
+savepos OFFSET
+
+next i
+
+get FILESIZE asize MEMORY_FILE
+log NAME 0 FILESIZE MEMORY_FILE
+
+endfunction

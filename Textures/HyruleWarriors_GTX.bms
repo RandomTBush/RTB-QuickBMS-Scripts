@@ -1,0 +1,102 @@
+# Hyrule Warriors - G1T to GTX Converter
+# Written by chrrox, tweaked by Random Talking Bush
+
+endian BIG
+idstring G1TG0060
+set MEMORY_FILE binary "\x47\x66\x78\x32\x00\x00\x00\x20\x00\x00\x00\x07\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x42\x4C\x4B\x7B\x00\x00\x00\x20\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x0B\x00\x00\x00\x9C\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x33\x00\x00\x00\x00\x00\x00\x00\x01\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x0D\x00\x00\x00\x00\x20\x00\x00\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x01\x02\x03\x07\xF8\x1F\x21\xCC\x00\x00\xFF\x06\x88\x80\x00\x00\x00\x00\x00\x80\x00\x00\xF0\x42\x4C\x4B\x7B\x00\x00\x00\x20\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x0C\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+get dataSize long
+get dataOffset long
+get texCount long
+get ukn1 long
+get ukn2 long
+for i = 0 < texCount
+get ukn3 long
+next i
+goto dataOffset
+savepos OFFTABLE
+
+for i = 0 < texCount
+endian BIG
+get NAME BASENAME
+string NAME + _
+string NAME + i
+string NAME + .gtx
+goto OFFTABLE
+
+print %OFFTABLE%
+set JUMP 0
+get JUMP long
+print %JUMP%
+
+savepos OFFTABLE
+math JUMP + dataOffset
+goto JUMP
+get ukn4 byte
+get texC byte
+print "Tex C"
+print %texC%
+get texD byte
+get NULL byte
+get NULL long
+get NULL long
+get NULL long
+get NULL long
+set set1 texD
+set set2 texD
+savepos OFFSET
+endian LITTLE
+math set1 & 0xF0
+math set1 / 16
+math set2 & 0x0F
+set texH 2
+set texW 2
+Math texW p set1
+Math texH p set2
+
+if texC == 0x09
+print "{0x09} ARGB32 Found!"
+set bbp 64
+putVarChr MEMORY_FILE 0x57 0x1A byte
+endif
+
+if texC == 0x60
+print "{0x60} DXT1 Found!"
+set bbp 8
+putVarChr MEMORY_FILE 0x57 0x31 byte
+endif
+
+if texC == 0x62
+print "{0x62} DXT5 Found!"
+set bbp 16
+putVarChr MEMORY_FILE 0x57 0x33 byte
+endif
+
+set SIZE texH
+math SIZE * texW
+math bbp / 8
+math SIZE * bbp
+math SIZE / 2
+
+endian BIG
+putVarChr MEMORY_FILE 0x46 texW short
+putVarChr MEMORY_FILE 0x7E texW short
+putVarChr MEMORY_FILE 0x4A texH short
+putVarChr MEMORY_FILE 0x60 SIZE long
+putVarChr MEMORY_FILE 0xF0 SIZE long
+
+log MEMORY_FILE2 0 0xFC MEMORY_FILE
+
+append
+log MEMORY_FILE2 OFFSET SIZE
+append
+
+set MEMORY_FILE3 binary "\x42\x4C\x4B\x7B\x00\x00\x00\x20\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+append
+log MEMORY_FILE2 0 0x20 MEMORY_FILE3
+append
+
+get FILESIZE asize MEMORY_FILE2
+log NAME 0 FILESIZE MEMORY_FILE2
+next i

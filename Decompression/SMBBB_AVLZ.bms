@@ -1,0 +1,14 @@
+# Super Monkey Ball: Banana Blitz - AVLZ Decompression
+# Written by Random Talking Bush
+
+endian big
+comtype lzss "12 4 2 2 0"
+idstring AVLZ
+get SIZE long
+get ZSIZE long
+savepos OFFSET
+math ZSIZE -= OFFSET
+
+get NAME filename
+string NAME += ".unpacked"
+clog NAME OFFSET ZSIZE SIZE

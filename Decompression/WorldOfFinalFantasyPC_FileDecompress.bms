@@ -1,0 +1,22 @@
+# World of Final Fantasy (PC) - File Decompressor
+# Written by Random Talking Bush
+
+endian big
+
+	get PATH FILENAME
+	get NAME FILENAME
+	string PATH = "decompressed/"
+	string PATH += NAME
+
+	goto 0x80
+	get ZLIB long
+	get FILESIZE long
+	get FILESIZEZ long
+	
+	if ZLIB = 0x42494C5A
+		if FILESIZE != FILESIZEZ
+		clog PATH 0x90 FILESIZEZ FILESIZE 0
+		else
+		log PATH 0x90 FILESIZE 0
+		endif
+	endif

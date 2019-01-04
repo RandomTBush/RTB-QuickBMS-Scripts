@@ -1,0 +1,323 @@
+# Crash Bandicoot: N.Sane Trilogy (PC, PS4 and Switch) - IGZ to DDS/GNF Converter
+# Written by Random Talking Bush
+
+idstring "IGZ\x01"
+
+endian little
+
+goto 0x800
+savepos NEXTHEADER
+get TSTRMAGIC long
+get TSTRCOUNT long
+get TSTRSIZE long
+get TSTRSTART long
+math TSTRSTART + NEXTHEADER
+math NEXTHEADER + TSTRSIZE
+
+goto TSTRSTART
+
+for i = 0 < TSTRCOUNT
+
+get TEXSTRING string
+print %TEXSTRING%
+
+next i
+
+goto NEXTHEADER
+
+get TMETMAGIC long
+get TMETCOUNT long
+get TMETSIZE long
+get TMETSTART long
+math NEXTHEADER + TMETSIZE
+
+goto NEXTHEADER
+
+get MTSZMAGIC long
+get MTSZCOUNT long
+get MTSZSIZE long
+get MTSZSTART long
+math NEXTHEADER + MTSZSIZE
+
+goto NEXTHEADER
+
+savepos EXIDOFFSET
+get EXIDMAGIC long
+get EXIDCOUNT long
+get EXIDSIZE long
+get EXIDSTART long
+math NEXTHEADER + EXIDSIZE
+math EXIDOFFSET + EXIDSTART
+goto EXIDOFFSET
+get EXIDFORMAT long
+
+goto NEXTHEADER
+
+get RVTBMAGIC long
+get RVTBCOUNT long
+get RVTBSIZE long
+get RVTBSTART long
+math NEXTHEADER + RVTBSIZE
+
+goto NEXTHEADER
+
+get RSTTMAGIC long
+get RSTTCOUNT long
+get RSTTSIZE long
+get RSTTSTART long
+math NEXTHEADER + RSTTSIZE
+
+goto NEXTHEADER
+
+get ROFSMAGIC long
+get ROFSCOUNT long
+get ROFSSIZE long
+get ROFSSTART long
+math NEXTHEADER + ROFSSIZE
+
+goto NEXTHEADER
+
+get REXTMAGIC long
+get REXTCOUNT long
+get REXTSIZE long
+get REXTSTART long
+math NEXTHEADER + REXTSIZE
+
+goto NEXTHEADER
+
+get ROOTMAGIC long
+get ROOTCOUNT long
+get ROOTSIZE long
+get ROOTSTART long
+math NEXTHEADER + ROOTSIZE
+
+goto NEXTHEADER
+
+get ONAMMAGIC long
+get ONAMCOUNT long
+get ONAMSIZE long
+get ONAMSTART long
+math NEXTHEADER + ONAMSIZE
+
+goto NEXTHEADER
+
+get BLANK long # 00000000
+get BLANK long # 00000000
+get BLANK long # 00000000
+get UNKNOWN long # 00000001
+
+get UNKNOWN long # 00000001
+get BLANK long # 00000000
+get UNKNOWN long # 00000008
+get UNKNOWN long # 01100000
+
+get UNKNOWN long # 00000028
+get BLANK long # 00000000
+get UNKNOWN long # 00000030
+get BLANK long # 00000000
+
+get UNKNOWN long # 00000001
+get BLANK long # 00000000
+get UNKNOWN long # 00000001
+get BLANK long # 00000000
+
+get BLANK long # 00000000
+get BLANK long # 00000000
+get WIDTH short # 0100
+get HEIGHT short # 0100
+get UNKNOWN long # 00070001, flags?
+
+get UNKNOWN long # 00000001
+get BLANK long # 00000000
+get BLANK long # 00000000
+get UNKNOWN long # 80000000
+
+get BLANK long # 00000000
+get BLANK long # 00000000
+get FILESIZE long # 00016000
+get UNKNOWN long # 03D00000
+
+get UNKNOWN long # 08000000
+get BLANK long # 00000000
+get UNKNOWN long # FFFFFFFF
+get BLANK long # 00000000
+
+get BLANK long # 00000000
+get BLANK long # 00000000
+get UNKNOWN long # 00000002
+get BLANK long # 00000000
+
+get BLANK long # 00000000
+get UNKNOWN long # 00000001
+get UNKNOWN long # 00000001
+get BLANK long # 00000000
+
+get UNKNOWN long # 00000010
+get UNKNOWN long # 01100000
+get UNKNOWN long # 000000B0
+get BLANK long # 00000000
+
+get UNKNOWN long # 00000001
+get BLANK long # 00000000
+get UNKNOWN long # B35135FA
+get BLANK long # 00000000
+
+savepos TEXSTART
+
+get NAME basename
+
+if EXIDFORMAT = 0x9D3B06CD
+string NAME + .dds
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x04\x00\x00\x00\x44\x58\x54\x31\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+putVarChr MEMORY_FILE 0x0C HEIGHT short
+putVarChr MEMORY_FILE 0x10 WIDTH short
+putVarChr MEMORY_FILE 0x14 FILESIZE long
+print "DDS (PC): DXT1"
+
+elif EXIDFORMAT = 0xDA888839
+string NAME + .dds
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x04\x00\x00\x00\x44\x58\x54\x35\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+putVarChr MEMORY_FILE 0x0C HEIGHT short
+putVarChr MEMORY_FILE 0x10 WIDTH short
+putVarChr MEMORY_FILE 0x14 FILESIZE long
+print "DDS (PC): DXT5"
+
+elif EXIDFORMAT = 0x78B94718
+string NAME + .dds
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x04\x00\x00\x00\x41\x54\x49\x32\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+putVarChr MEMORY_FILE 0x0C HEIGHT short
+putVarChr MEMORY_FILE 0x10 WIDTH short
+putVarChr MEMORY_FILE 0x14 FILESIZE long
+print "DDS (PC): ATI2"
+
+elif EXIDFORMAT = 0x994608DE
+string NAME + .dds
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x41\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x08\x10\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+putVarChr MEMORY_FILE 0x0C HEIGHT short
+putVarChr MEMORY_FILE 0x10 WIDTH short
+putVarChr MEMORY_FILE 0x14 FILESIZE long
+print "DDS (PC): RGBA32"
+
+elif EXIDFORMAT = 0x1B282851
+string NAME + .dds
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x04\x00\x00\x00\x44\x58\x54\x31\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+putVarChr MEMORY_FILE 0x0C HEIGHT short
+putVarChr MEMORY_FILE 0x10 WIDTH short
+putVarChr MEMORY_FILE 0x14 FILESIZE long
+print "DDS (Switch): DXT1"
+
+elif EXIDFORMAT = 0x37456ECD
+string NAME + .dds
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x04\x00\x00\x00\x44\x58\x54\x35\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+putVarChr MEMORY_FILE 0x0C HEIGHT short
+putVarChr MEMORY_FILE 0x10 WIDTH short
+putVarChr MEMORY_FILE 0x14 FILESIZE long
+print "DDS (Switch): DXT5"
+
+elif EXIDFORMAT = 0x8EBE8CF2
+string NAME + .dds
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x41\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x00\x00\x00\x00\xFF\x08\x10\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+putVarChr MEMORY_FILE 0x0C HEIGHT short
+putVarChr MEMORY_FILE 0x10 WIDTH short
+putVarChr MEMORY_FILE 0x14 FILESIZE long
+print "DDS (Switch): RGBA32"
+
+elif EXIDFORMAT = 0xF8313483
+string NAME + .gnf
+set MEMORY_FILE binary "\x47\x4E\x46\x20\x28\x00\x00\x00\x02\x01\x00\x00\x30\x00\x10\x00\x00\x00\x00\x00\x01\x00\x00\x92\xFF\xC3\xFF\x70\xAC\x0F\xD0\xA4\x01\xE0\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00"
+math WIDTH - 1
+math WIDTH + 0xC000
+math HEIGHT - 1
+math HEIGHT > 2
+math HEIGHT + 0x7000
+set FILESIZE2 FILESIZE
+math FILESIZE2 + 0x30
+putVarChr MEMORY_FILE 0x18 WIDTH short
+putVarChr MEMORY_FILE 0x1A HEIGHT short
+putVarChr MEMORY_FILE 0x2C FILESIZE long
+putVarChr MEMORY_FILE 0x0C FILESIZE2 long
+putVarChr MEMORY_FILE 0x16 0x30 byte
+print "GNF (PS4): DXT1"
+
+elif EXIDFORMAT = 0xF0B976CF
+string NAME + .gnf
+set MEMORY_FILE binary "\x47\x4E\x46\x20\x28\x00\x00\x00\x02\x01\x00\x00\x30\x00\x10\x00\x00\x00\x00\x00\x01\x00\x00\x92\xFF\xC3\xFF\x70\xAC\x0F\xD0\xA4\x01\xE0\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00"
+math WIDTH - 1
+math WIDTH + 0xC000
+math HEIGHT - 1
+math HEIGHT > 2
+math HEIGHT + 0x7000
+set FILESIZE2 FILESIZE
+math FILESIZE2 + 0x30
+putVarChr MEMORY_FILE 0x18 WIDTH short
+putVarChr MEMORY_FILE 0x1A HEIGHT short
+putVarChr MEMORY_FILE 0x2C FILESIZE long
+putVarChr MEMORY_FILE 0x0C FILESIZE2 long
+putVarChr MEMORY_FILE 0x16 0x50 byte
+print "GNF (PS4): DXT5"
+
+elif EXIDFORMAT = 0x7D081E6A
+string NAME + .gnf
+set MEMORY_FILE binary "\x47\x4E\x46\x20\x28\x00\x00\x00\x02\x01\x00\x00\x30\x00\x10\x00\x00\x00\x00\x00\x01\x00\x00\x92\xFF\xC3\xFF\x70\xAC\x0F\xD0\xA4\x01\xE0\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00"
+math WIDTH - 1
+math WIDTH + 0xC000
+math HEIGHT - 1
+math HEIGHT > 2
+math HEIGHT + 0x7000
+set FILESIZE2 FILESIZE
+math FILESIZE2 + 0x30
+putVarChr MEMORY_FILE 0x18 WIDTH short
+putVarChr MEMORY_FILE 0x1A HEIGHT short
+putVarChr MEMORY_FILE 0x2C FILESIZE long
+putVarChr MEMORY_FILE 0x0C FILESIZE2 long
+putVarChr MEMORY_FILE 0x16 0x70 byte
+print "GNF (PS4): ATI2"
+
+elif EXIDFORMAT = 0x9B54FB48
+string NAME + .gnf
+set MEMORY_FILE binary "\x47\x4E\x46\x20\x28\x00\x00\x00\x02\x01\x00\x00\x30\x00\x10\x00\x00\x00\x00\x00\x01\x00\x00\x92\xFF\xC3\xFF\x70\xAC\x0F\xD0\xA4\x01\xE0\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00"
+math WIDTH - 1
+math WIDTH + 0xC000
+math HEIGHT - 1
+math HEIGHT > 2
+math HEIGHT + 0x7000
+set FILESIZE2 FILESIZE
+math FILESIZE2 + 0x30
+putVarChr MEMORY_FILE 0x18 WIDTH short
+putVarChr MEMORY_FILE 0x1A HEIGHT short
+putVarChr MEMORY_FILE 0x2C FILESIZE long
+putVarChr MEMORY_FILE 0x0C FILESIZE2 long
+putVarChr MEMORY_FILE 0x16 0xA0 byte
+putVarChr MEMORY_FILE 0x17 0x24 byte
+putVarChr MEMORY_FILE 0x1C 0x2E byte
+print "GNF (PS4): RGBA32"
+
+elif EXIDFORMAT = 0xEDF22608
+string NAME + .gnf
+set MEMORY_FILE binary "\x47\x4E\x46\x20\x28\x00\x00\x00\x02\x01\x00\x00\x30\x00\x10\x00\x00\x00\x00\x00\x01\x00\x00\x92\xFF\xC3\xFF\x70\xAC\x0F\xD0\xA4\x01\xE0\x7F\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00"
+math WIDTH - 1
+math WIDTH + 0xC000
+math HEIGHT - 1
+math HEIGHT > 2
+math HEIGHT + 0x7000
+set FILESIZE2 FILESIZE
+math FILESIZE2 + 0x30
+putVarChr MEMORY_FILE 0x18 WIDTH short
+putVarChr MEMORY_FILE 0x1A HEIGHT short
+putVarChr MEMORY_FILE 0x2C FILESIZE long
+putVarChr MEMORY_FILE 0x0C FILESIZE2 long
+putVarChr MEMORY_FILE 0x16 0xA0 byte
+putVarChr MEMORY_FILE 0x17 0x24 byte
+print "GNF (PS4): BGRA32?"
+
+else
+print "UNKNOWN FORMAT! %EXIDFORMAT%"
+string NAME + .unknown
+endif
+
+append
+log MEMORY_FILE TEXSTART FILESIZE
+append
+
+get TEXSIZE asize MEMORY_FILE
+log NAME 0 TEXSIZE MEMORY_FILE

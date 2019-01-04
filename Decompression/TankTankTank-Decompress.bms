@@ -1,0 +1,15 @@
+# Tank! Tank! Tank! - LZSS Decompression
+# Written by Random Talking Bush
+
+endian little
+comtype COMP_PUYO_LZ01
+
+idstring SSZL
+get BLANK long
+get ZSIZE long
+get SIZE long
+get NAME filename
+string NAME += .arc
+clog NAME 16 ZSIZE SIZE
+
+endfunction

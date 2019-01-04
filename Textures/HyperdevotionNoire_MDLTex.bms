@@ -1,0 +1,60 @@
+# Hyperdevotion Noire - MDL Texture Extractor
+# Written by Random Talking Bush
+
+endian little
+
+goto 0x08
+get TEXOFFSTART long
+goto TEXOFFSTART
+
+get TEXMAGIC longlong
+get CHUNKSIZE long
+savepos OFFSTART
+get FILECOUNT long
+
+for i = 0 < FILECOUNT
+
+get TEXOFFSET long
+math TEXOFFSET + OFFSTART
+savepos TEXRETURN
+goto TEXOFFSET
+
+getdstring MATNAME 0x20
+getdstring FILENAME 0x24
+get UNKNOWN1 long
+get UNKNOWN2 long
+get FLAG1 byte
+get FLAG2 byte
+get FLAG3 byte
+get FLAG4 byte
+get FILESIZE long
+get WIDTH long
+get HEIGHT long
+savepos DDSSTART
+goto TEXRETURN
+
+log MEMORY_FILE 0 0
+
+set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x80\x00\x00\x00\x80\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x04\x00\x00\x00\x44\x58\x54\x31\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+putVarChr MEMORY_FILE 0x0C HEIGHT long
+putVarChr MEMORY_FILE 0x10 WIDTH long
+putVarChr MEMORY_FILE 0x14 FILESIZE long
+
+if FLAG2 = 0xA0
+putVarChr MEMORY_FILE 0x57 0x35 byte
+endif
+
+append
+log MEMORY_FILE DDSSTART FILESIZE
+append
+
+get NAME basename
+string NAME + \
+string NAME + FILENAME
+string NAME + .dds
+
+get DDSSIZE asize MEMORY_FILE
+log NAME 0 DDSSIZE MEMORY_FILE
+
+next i

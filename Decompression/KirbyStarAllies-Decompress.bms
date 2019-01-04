@@ -1,0 +1,11 @@
+# Kirby: Star Allies - File Decompression
+# Written by Random Talking Bush
+
+endian little
+comtype COMP_LZ4F
+
+get SIZE long
+get ZSIZE asize
+math ZSIZE -= 4
+get NAME basename
+clog NAME 4 ZSIZE SIZE

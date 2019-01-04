@@ -1,0 +1,14 @@
+# Kirby and the Rainbow Curse - File Decompression
+# Written by Random Talking Bush
+
+endian big
+comtype COMP_UNZIP_DYNAMIC
+
+idstring ZCMP
+get ZSIZE asize
+math ZSIZE -= 128
+get NAME filename
+string NAME += .dec
+clog NAME 128 ZSIZE ZSIZE
+
+endfunction

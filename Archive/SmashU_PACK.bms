@@ -1,0 +1,31 @@
+# Super Smash Bros. for Wii U - PAC Extractor
+# Written by Random Talking Bush
+
+endian big
+
+idstring "KCAP"
+get UNKNOWN long
+get FILETOTAL long
+get UNKNOWN long
+
+goto 0x10
+
+for i = 0 < FILETOTAL
+get NAMESTART[i] long
+next i
+
+for i = 0 < FILETOTAL
+get FILESTART[i] long
+next i
+
+for i = 0 < FILETOTAL
+get FILESIZE[i] long
+next i
+
+for i = 0 < FILETOTAL
+goto NAMESTART[i]
+get NAME string
+log NAME FILESTART[i] FILESIZE[i]
+next i
+
+endfunction

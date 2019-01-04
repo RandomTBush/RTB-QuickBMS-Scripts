@@ -1,0 +1,73 @@
+# ND Cube - BIN Extractor
+# Works with Mario Party 10 and Animal Crossing: amiibo Festival
+# Written by Random Talking Bush
+
+endian big
+comtype COMP_UNZIP_DYNAMIC
+
+get PAC long
+get HEADERLENGTH long
+get BLANK long
+get OVERALLFILESTART long
+get PACSIZE long
+get LANGUAGECOUNT long
+get UNKNOWN long
+get UNKNOWN long
+
+get FILETOTAL long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get LANGUAGESTART long
+get FILEHEADERSTART long
+get STRINGSTART long
+get OVERALLFILESTART2 long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+get BLANK long
+
+get LANGUAGENAME long
+get UNKNOWN long
+get LANGUAGEFILECOUNT long
+get LANGUAGEOFFSETSTART long
+
+goto FILEHEADERSTART
+
+for i = 0 < FILETOTAL
+
+get FILENAMESTART long
+get UNKNOWN long
+get EXTENSIONSTART long
+get UNKNOWN long
+get FILESTART long
+get SIZE long
+get ZSIZE long
+get ZSIZE2 long
+get BLANK long
+get BLANK long
+get UNKNOWN long
+get BLANK long
+
+savepos RETURN
+
+goto FILENAMESTART
+get NAME string
+clog NAME FILESTART ZSIZE ZSIZE
+goto RETURN
+
+next i
+
+endfunction

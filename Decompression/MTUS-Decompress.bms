@@ -1,0 +1,20 @@
+# Mario Tennis: Ultra Smash / Aces - File Decompression
+# Unfortunately there's a bunch of files that use a secondary compression that I've yet to figure out.
+# Written by Random Talking Bush
+
+endian big
+
+get COMPFMT byte
+
+if COMPFMT = 0x30
+comtype COMP_DEFLATE
+get SIZE long
+get ZSIZE asize
+math ZSIZE -= 16
+get NAME filename
+string NAME += .dec
+clog NAME 16 ZSIZE SIZE
+
+elif COMPFMT = 0x50
+print "Unknown compression!"
+endif

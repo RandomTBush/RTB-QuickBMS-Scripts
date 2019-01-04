@@ -1,0 +1,12 @@
+# Wii Sports Club - File Decompression
+# Written by Random Talking Bush
+
+endian big
+comtype COMP_UNZIP_DYNAMIC
+
+get ZSIZE asize
+get NAME filename
+string NAME += .dec
+clog NAME 0 ZSIZE ZSIZE
+
+endfunction

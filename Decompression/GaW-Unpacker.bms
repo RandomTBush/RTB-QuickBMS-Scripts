@@ -1,0 +1,14 @@
+# Game & Wario - File Decompression
+# Written by Random Talking Bush
+
+endian big
+comtype COMP_UNZIP_DYNAMIC
+
+idstring FZIP
+get ZSIZE asize
+math ZSIZE -= 8
+get NAME filename
+string NAME += .dec
+clog NAME 8 ZSIZE ZSIZE
+
+endfunction

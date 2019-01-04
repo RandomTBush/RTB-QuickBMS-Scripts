@@ -1,0 +1,85 @@
+# Megadimension Neptunia VII - DLC ARC Extractor
+# Written by Random Talking Bush
+
+endian big
+
+idstring ARC
+
+goto 0x04
+get HEADERCOUNT long
+math HEADERCOUNT - 1
+get HEADERLENGTH long
+get STRINGHEADERLENGTH long
+
+set STRINGSTART 0
+math STRINGSTART += 0x10
+math STRINGSTART += HEADERLENGTH
+set PACKSTART 0
+math PACKSTART += 0x10
+math PACKSTART += HEADERLENGTH
+math PACKSTART += STRINGHEADERLENGTH
+
+goto 0x28
+
+for i = 0 < HEADERCOUNT
+get FILETYPE byte
+get FILETYPEB byte
+get FILETYPEC byte
+get FILETYPED byte
+get FILEID long
+get FILESTRING long
+math FILESTRING += STRINGSTART
+get FILESIZE long
+get FILEBLANK long
+get FILESTART long
+savepos OFFSET
+goto FILESTRING
+get FILENAME string
+goto OFFSET
+
+putarray 0 i FILETYPE
+putarray 1 i FILEID
+putarray 2 i FILESIZE
+putarray 3 i FILENAME
+putarray 4 i FILESTART
+
+next i
+
+for i = 0 < HEADERCOUNT
+getarray FILETYPE 0 i
+getarray FILEID 1 i
+getarray FOLDERCOUNT 2 i
+getarray FILENAME 3 i
+getarray FILENEXT 4 i
+math FILENEXT + i
+
+if FILETYPE == 2
+
+for j = 0 < FOLDERCOUNT
+getarray FILENAME2 3 FILENEXT
+set FILENAME3 FILENAME
+string FILENAME3 + \
+string FILENAME3 + FILENAME2
+putarray 3 FILENEXT FILENAME3
+math FILENEXT + 1
+next j
+
+endif
+
+next i
+
+for i = 0 < HEADERCOUNT
+getarray FILETYPE 0 i
+getarray FILESIZE 2 i
+getarray FILENAME 3 i
+getarray FILESTART 4 i
+
+if FILETYPE == 4
+math FILESTART += PACKSTART
+set NAME FILENAME
+log NAME FILESTART FILESIZE
+endif
+
+next i
+
+endfunction

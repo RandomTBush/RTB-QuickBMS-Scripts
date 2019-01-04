@@ -1,0 +1,14 @@
+# Pokémon Rumble U - CX Decompression
+# Written by Random Talking Bush
+
+endian little
+comtype unzip_dynamic
+goto 0x04
+get SIZE long
+goto 0x0C
+get ZSIZE long
+get NAME BASENAME
+
+clog NAME 20 ZSIZE SIZE
+
+endfunction

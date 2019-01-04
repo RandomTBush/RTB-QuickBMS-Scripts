@@ -1,0 +1,156 @@
+# GriefSyndrome - CV2 to DDS Converter
+# Written by Random Talking Bush
+
+endian little
+
+get BPP byte
+math BPP / 8
+
+if BPP = 3
+	set BPP 4
+endif
+
+get ACTUALWIDTH long
+get HEIGHT long
+get WIDTH long
+set FILESIZE ACTUALWIDTH
+math FILESIZE * HEIGHT
+math FILESIZE * BPP
+
+if BPP = 1
+
+	get PALETTEFILENAME FILE_FOLDER
+	string PALETTEFILENAME += \palette000.pal
+	open PALETTE PALETTEFILENAME 1
+	goto 1 1
+
+	set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+	putVarChr MEMORY_FILE 0x0C HEIGHT long
+	putVarChr MEMORY_FILE 0x10 ACTUALWIDTH long
+	putVarChr MEMORY_FILE 0x14 FILESIZE long
+
+	set PALETTEOFFSET 0x80
+
+	for p = 0 < 256
+
+		get PALETTEVAL short 1
+		set PALETTER PALETTEVAL
+		set PALETTEG PALETTEVAL
+		set PALETTEB PALETTEVAL
+		set PALETTEA PALETTEVAL
+
+		math PALETTEB & 0x001F
+		math PALETTEB * 8
+		math PALETTEG & 0x03E0
+		math PALETTEG / 4
+		math PALETTER & 0x7C00
+		math PALETTER / 128
+		math PALETTEA & 0x8000
+		math PALETTEA / 32768
+		math PALETTEA * 255
+
+		append
+		putVarChr MEMORY_FILE PALETTEOFFSET PALETTER byte
+		append
+
+		math PALETTEOFFSET += 1
+
+		append
+		putVarChr MEMORY_FILE PALETTEOFFSET PALETTEG byte
+		append
+
+		math PALETTEOFFSET += 1
+
+		append
+		putVarChr MEMORY_FILE PALETTEOFFSET PALETTEB byte
+		append
+
+		math PALETTEOFFSET += 1
+
+		append
+		putVarChr MEMORY_FILE PALETTEOFFSET PALETTEA byte
+		append
+
+		math PALETTEOFFSET += 1
+
+	next p
+
+	if ACTUALWIDTH = WIDTH
+		append
+		log MEMORY_FILE 17 FILESIZE
+		append
+	else
+
+	set PIXOFF 17
+
+	for w = 0 < HEIGHT
+		append
+		log MEMORY_FILE PIXOFF ACTUALWIDTH
+		append
+		math PIXOFF + WIDTH
+	next w
+	endif
+
+elif BPP = 2
+
+	set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x41\x00\x00\x00\x00\x00\x00\x00\x10\x00\x00\x00\x00\x7C\x00\x00\xE0\x03\x00\x00\x1F\x00\x00\x00\x00\x80\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+	putVarChr MEMORY_FILE 0x0C HEIGHT long
+	putVarChr MEMORY_FILE 0x10 ACTUALWIDTH long
+	putVarChr MEMORY_FILE 0x14 FILESIZE long
+
+	if ACTUALWIDTH = WIDTH
+		append
+		log MEMORY_FILE 17 FILESIZE
+		append
+	else
+	set PIXOFF 17
+	set BYTEWRITE ACTUALWIDTH
+	math BYTEWRITE * 2
+
+	for w = 0 < HEIGHT
+		append
+		log MEMORY_FILE PIXOFF BYTEWRITE
+		append
+		for x = 0 < 2
+			math PIXOFF + WIDTH
+		next x
+	next w
+	endif
+
+elif BPP = 4
+
+	set MEMORY_FILE binary "\x44\x44\x53\x20\x7C\x00\x00\x00\x07\x10\x08\x00\x00\x02\x00\x00\x00\x02\x00\x00\x00\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x41\x00\x00\x00\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\xFF\x00\x00\xFF\x00\x00\xFF\x00\x00\x00\x00\x00\x00\xFF\x00\x10\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+	putVarChr MEMORY_FILE 0x0C HEIGHT long
+	putVarChr MEMORY_FILE 0x10 ACTUALWIDTH long
+	putVarChr MEMORY_FILE 0x14 FILESIZE long
+
+	if ACTUALWIDTH = WIDTH
+		append
+		log MEMORY_FILE 17 FILESIZE
+		append
+	else
+
+	set PIXOFF 17
+	set BYTEWRITE ACTUALWIDTH
+	math BYTEWRITE * 4
+
+	for w = 0 < HEIGHT
+		append
+		log MEMORY_FILE PIXOFF BYTEWRITE
+		append
+		for x = 0 < 4
+			math PIXOFF + WIDTH
+		next x
+	next w
+	endif
+
+endif
+
+get DDSSIZE asize MEMORY_FILE
+get NAME basename
+string NAME + .dds
+
+log NAME 0 DDSSIZE MEMORY_FILE

@@ -1,0 +1,44 @@
+# KOF '98 UM OL PNG De-XORer by Random Talking Bush
+# Ex-XOR-bitant.
+
+endian big
+get XORBytes1 long
+get XORBytes2 long
+get XORBytes3 long
+get XORBytes4 long
+
+goto 0x10 0 SEEK_SET
+get PNGSIZE asize
+math PNGSIZE - 32
+get NAME BASENAME
+
+FileXOR XORBytes1 0
+append
+log MEMORY_FILE 0x10 0x04 0
+append
+FileXOR XORBytes2 0
+append
+log MEMORY_FILE 0x14 0x04 0
+append
+FileXOR XORBytes3 0
+append
+log MEMORY_FILE 0x18 0x04 0
+append
+FileXOR XORBytes4 0
+append
+log MEMORY_FILE 0x1C 0x04 0
+append
+
+FileXOR 0 0
+
+append
+log MEMORY_FILE 0x20 PNGSIZE 0
+append
+
+get SIZE asize MEMORY_FILE
+get EXT EXTENSION
+
+string NAME + "_deXOR."
+string NAME + EXT
+
+log NAME 0 SIZE MEMORY_FILE

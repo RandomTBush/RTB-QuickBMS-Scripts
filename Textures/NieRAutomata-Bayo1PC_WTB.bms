@@ -1,0 +1,39 @@
+# NieR: Automata / Bayonetta 1 (PC) - WTB to DDS Converter
+# Written by Random Talking Bush
+
+idstring "\x57\x54\x42\x00"
+
+endian little
+
+get UNKNOWN long
+get FILETOTAL long
+get FILESTARTOFFSET long
+get FILESIZEOFFSET long
+
+goto FILESTARTOFFSET
+
+for i = 0 < FILETOTAL
+
+get FILESTART[i] long
+
+next i
+
+goto FILESIZEOFFSET
+
+for i = 0 < FILETOTAL
+
+get FILESIZE long
+
+get NAME basename
+
+if FILETOTAL > 1
+string NAME + _
+string NAME + i
+endif
+
+string NAME + .dds
+log NAME FILESTART[i] FILESIZE
+
+next i
+
+endfunction

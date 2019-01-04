@@ -1,0 +1,27 @@
+# Tank! Tank! Tank! - ARC Extractor
+# Written by Random Talking Bush
+# Internal filenames are limited to 31 characters, so you'll want to auto-rename as you extract.
+
+idstring VCRA
+
+endian little
+get FILES long
+get ARCSIZE long
+
+for i = 0 < FILES
+
+	savepos OFFSET
+	math OFFSET + 0x2C
+	get FILEOFFSET long
+	get FILESIZE long
+	get FILEHASH long
+	get NAME string
+	goto OFFSET
+	get PATH basename
+	string PATH += /
+	string PATH += NAME
+	log PATH FILEOFFSET FILESIZE
+
+next i
+
+endfunction

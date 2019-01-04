@@ -1,0 +1,147 @@
+# Wii U - BFLIM to GTX Converter
+# Written by Random Talking Bush
+
+endian big
+
+get NAME basename
+string NAME + .gtx
+
+log MEMORY_FILE 0 0
+
+set MEMORY_FILE binary "\x47\x66\x78\x32\x00\x00\x00\x20\x00\x00\x00\x07\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x42\x4C\x4B\x7B\x00\x00\x00\x20\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x0B\x00\x00\x00\x9C\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x80\x00\x00\x00\x80\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x33\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x0D\x03\x00\x00\x00\x20\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x01\x02\x03\x03\xF8\x0F\x21\xCC\x00\x00\x7F\x06\x88\x80\x00\x00\x00\x00\x00\x80\x00\x00\xF0\x42\x4C\x4B\x7B\x00\x00\x00\x20\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x0C\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+get FLIMSIZE asize
+math FLIMSIZE -= 40
+
+append
+log MEMORY_FILE 0 FLIMSIZE
+append
+
+set MEMORY_FILE2 binary "\x42\x4C\x4B\x7B\x00\x00\x00\x20\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+append
+log MEMORY_FILE 0 0x20 MEMORY_FILE2
+append
+
+goto -0x05 0 SEEK_END
+
+get SWIZZLE byte
+if SWIZZLE = 0x04
+math SWIZZLE = 0
+endif
+
+if SWIZZLE = 0x24
+math SWIZZLE = 1
+endif
+
+if SWIZZLE = 0x44
+math SWIZZLE = 2
+endif
+
+if SWIZZLE = 0x64
+math SWIZZLE = 3
+endif
+
+if SWIZZLE = 0x84
+math SWIZZLE = 4
+endif
+
+if SWIZZLE = 0xA4
+math SWIZZLE = 5
+endif
+
+if SWIZZLE = 0xC4
+math SWIZZLE = 6
+endif
+
+if SWIZZLE = 0xE4
+math SWIZZLE = 7
+endif
+
+goto -0x0A 0 SEEK_END
+get HEIGHT short
+
+goto -0x0C 0 SEEK_END
+get WIDTH short
+
+goto -0x06 0 SEEK_END
+get FORMAT byte
+
+set GTXFORMAT 0
+
+if FORMAT = 0x00 # ^c
+math GTXFORMAT = 0x01 # R8
+endif
+
+if FORMAT = 0x01 # ^d
+math GTXFORMAT = 0x01 # R8
+endif
+
+if FORMAT = 0x03 # ^f
+math GTXFORMAT = 0x07 # R8A8
+endif
+
+if FORMAT = 0x05 # ^h
+math GTXFORMAT = 0x08 # RGB565
+endif
+
+if FORMAT = 0x09 # ^l
+math GTXFORMAT = 0x1A # RGBA32_UNORM / RGBA8888
+endif
+
+if FORMAT = 0x0C # ^o
+math GTXFORMAT = 0x31 # BC1_UNORM / DXT1
+endif
+
+if FORMAT = 0x0D # ^p
+math GTXFORMAT = 0x32 # BC2_UNORM / DXT3
+endif
+
+if FORMAT = 0x0E # ^q / ^k
+math GTXFORMAT = 0x33 # BC3_UNORM / DXT5
+endif
+
+if FORMAT = 0x0F # ^r
+math GTXFORMAT = 0x34 # BC4_UNORM / ATI1
+endif
+
+if FORMAT = 0x10 # ^s
+math GTXFORMAT = 0x34 # BC4_UNORM / ATI1
+endif
+
+if FORMAT = 0x11 # ^t
+math GTXFORMAT = 0x35 # BC5_UNORM / ATI2
+endif
+
+if FORMAT = 0x12 # ^i
+math GTXFORMAT = 0x30 # BC1_UNORM / DXT1
+endif
+
+if FORMAT = 0x14 # ^l
+math GTXFORMAT = 0x1A # RGBA32_UNORM / RGBA8888
+endif
+
+if FORMAT = 0x15 # ^o
+math GTXFORMAT = 0x31 # BC1_UNORM / DXT1
+endif
+
+if FORMAT = 0x16 # ^p
+math GTXFORMAT = 0x32 # BC2_UNORM / DXT3
+endif
+
+if FORMAT = 0x17 # ^q
+math GTXFORMAT = 0x33 # BC3_UNORM / DXT5
+endif
+
+putVarChr MEMORY_FILE 0x46 WIDTH short
+putVarChr MEMORY_FILE 0x7E WIDTH short
+putVarChr MEMORY_FILE 0x4A HEIGHT short
+putVarChr MEMORY_FILE 0x60 FLIMSIZE long
+putVarChr MEMORY_FILE 0xF0 FLIMSIZE long
+putVarChr MEMORY_FILE 0x57 GTXFORMAT byte
+putVarChr MEMORY_FILE 0x76 SWIZZLE byte
+
+get SIZE asize MEMORY_FILE
+log NAME 0 SIZE MEMORY_FILE
+
+endfunction

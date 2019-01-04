@@ -1,0 +1,16 @@
+# Hyrule Warriors - Voice/EXCL Extractor
+# This is specifically to be used on the "EXCL" files in the voice folder
+# Written by Random Talking Bush
+
+endian big
+get FILES long
+
+for i = 0 < FILES
+	get NAME basename
+	string NAME += _
+	string NAME += i
+	string NAME += .g1l
+    get OFFSET long
+    get SIZE long
+    log NAME OFFSET SIZE
+next i

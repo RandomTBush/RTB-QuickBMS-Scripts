@@ -1,0 +1,103 @@
+# Donkey Kong Country: Tropical Freeze - TXTR to GTX Converter
+# Written by Random Talking Bush
+
+endian big
+
+get RFRM long
+get UNKNOWN long #0x00000000?
+get HEADSIZE long
+get UNKNOWN long #0x00000000?
+get UNKNOWN long #0x00000000?
+
+get TXTR long
+get TXTR1 long #0x0E?
+get TXTR2 long #0x0E?
+
+get HEAD long
+get UNKNOWN long #0x00000000?
+get HEADSIZE long
+get UNKNOWN long #0x00000001?
+
+get UNKNOWN long #0x00000000?
+get UNKNOWN long #0x00000000?
+
+savepos TEXSTART
+math TEXSTART += HEADSIZE
+math TEXSTART += 0x18
+
+get UNKNOWN long
+get FORMAT long
+
+if FORMAT = 0x0C
+math FORMAT = 0x1A # RGBA32_UNORM / RGBA8888
+endif
+
+if FORMAT = 0x14
+math FORMAT = 0x31 # BC1_UNORM / DXT1
+endif
+
+if FORMAT = 0x18
+math FORMAT = 0x33 # BC3_UNORM / DXT5
+endif
+
+if FORMAT = 0x1C
+math FORMAT = 0x35 # BC5_UNORM / ATI2
+endif
+
+get WIDTH long
+get HEIGHT long
+get DEPTH long
+get UNKNOWN long
+
+get SWIZZLE long
+get MIPMAPS long
+get TEXSIZE long
+get UNKNOWN long
+
+goto TEXSTART
+
+math TEXSIZE / DEPTH
+
+for i = 0 < DEPTH
+
+log MEMORY_FILE 0 0
+
+set MEMORY_FILE binary "\x47\x66\x78\x32\x00\x00\x00\x20\x00\x00\x00\x07\x00\x00\x00\x01\x00\x00\x00\x02\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x42\x4C\x4B\x7B\x00\x00\x00\x20\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x0B\x00\x00\x00\x9C\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x80\x00\x00\x00\x80\x00\x00\x00\x01\x00\x00\x00\x01\x00\x00\x00\x33\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x04\x00\x0D\x03\x00\x00\x00\x20\x00\x00\x00\x00\x20\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x01\x02\x03\x03\xF8\x0F\x21\xCC\x00\x00\x7F\x06\x88\x80\x00\x00\x00\x00\x00\x80\x00\x00\xF0\x42\x4C\x4B\x7B\x00\x00\x00\x20\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x0C\x00\x00\x40\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+append
+log MEMORY_FILE TEXSTART TEXSIZE
+append
+
+set MEMORY_FILE2 binary "\x42\x4C\x4B\x7B\x00\x00\x00\x20\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00"
+
+append
+log MEMORY_FILE 0 0x20 MEMORY_FILE2
+append
+
+putVarChr MEMORY_FILE 0x46 WIDTH short
+putVarChr MEMORY_FILE 0x7E WIDTH short
+putVarChr MEMORY_FILE 0x4A HEIGHT short
+putVarChr MEMORY_FILE 0x60 TEXSIZE long
+putVarChr MEMORY_FILE 0xF0 TEXSIZE long
+putVarChr MEMORY_FILE 0x57 FORMAT byte
+putVarChr MEMORY_FILE 0x76 SWIZZLE byte
+
+get SIZE asize MEMORY_FILE
+
+get NAME basename
+
+if DEPTH > 1
+string NAME + _
+string NAME + i
+endif
+
+string NAME + .gtx
+
+log NAME 0 SIZE MEMORY_FILE
+
+math SWIZZLE += 2
+math TEXSTART += TEXSIZE
+
+next i
+
+endfunction
