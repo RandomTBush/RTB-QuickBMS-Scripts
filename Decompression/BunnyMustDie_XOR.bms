@@ -1,0 +1,8 @@
+# Bunny Must Die: Chelsea and the 7 Devils - De-XOR
+# Written by Random Talking Bush
+
+FileXOR "\xCE\x13\xBA\xDC\xCF\x9B\xCA\x79\x91\x47\xC5\xFD"
+get SIZE asize
+get NAME BASENAME
+string NAME + ".dec"
+log NAME 0 SIZE 0
