@@ -1,0 +1,127 @@
+# Bezel Engine Archive (Nintendo Switch) - *.BEA Extractor
+# Originally written by aluigi (https://aluigi.altervista.org/quickbms.htm)
+# Updated by Random Talking Bush to work with newer BEA archives from the following:
+# Endless Ocean: Luminous (v5.0.0)
+# Super Mario Party Jamboree (v6.0.0)
+
+endian little
+comtype zstd
+idstring "SCNE"
+get ZERO long
+get VERNUM long
+get ENDIANNESS short
+get UNKNOWN short
+
+get ZERO long
+get UNKNOWN long
+get RLT_OFF long
+get BEA_SIZE long
+get FILES long
+get UNKNOWN long
+	
+if VERNUM == 0x00050000 or VERNUM == 0x00060000
+	get ASST_OFF longlong
+endif
+
+get INFO_OFF longlong
+get DIC_OFF longlong
+
+get UNKOFF1 longlong
+get UNKOFF2 longlong
+
+get UNKOFF3 longlong
+get UNKOFF4 longlong
+
+goto INFO_OFF
+for i = 0 < FILES
+    get OFFSET longlong
+    putarray 0 i OFFSET
+next i
+    putarray 0 i LAST_OFF   # useless, just failsafe if changing parsing
+
+/*
+# useless stuff, left here in case it may be useful in the future
+
+goto RLT_OFF
+idstring "_RLT"
+get SIZE long
+get DUMMY long
+getdstring ZERO 16
+get SIZE long
+get ZERO long
+get NUM long
+for i = 0 < NUM
+    get OFFSET long
+    get DUMMY short
+    get DUMMY short
+next i
+
+goto DIC_OFF
+idstring "DIC "
+get NAMES long
+for i = 0 <= NAMES
+    get DUMMY long
+    get DUMMY short
+    get DUMMY short
+    get NAME_OFF longlong
+    callfunction GET_NAME 1
+    if i > 0
+        putarray 1 -1 NAME
+    endif
+next i
+
+# just the name of the scne file
+#math NAME_OFF = LAST_OFF
+#callfunction GET_NAME 1
+*/
+
+for i = 0 < FILES
+    getarray OFFSET 0 i
+    #getarray NAME   1 i
+    goto OFFSET
+    idstring "ASST"
+    get UNKNOWN1 long
+    get UNKNOWN2 long
+    get UNKNOWN3 long
+    get UNKNOWN4 long  # FLAGS? 0x000c0002 for compression?
+    get ZSIZE long
+    get SIZE long
+	if VERNUM == 0x00050000
+		getdstring FORMATSTRING 0x08
+		get ZERO long
+	elif VERNUM == 0x00060000
+		get ZERO long
+		get ZERO long
+		get ZERO long
+		get UNKNOWN5A long
+		get UNKNOWN5B long
+		get UNKNOWN5C long
+		get UNKNOWN5D long
+	else
+		get ZERO long
+	endif
+    get OFFSET longlong
+    get NAME_OFF longlong
+    callfunction GET_NAME 1
+
+    # for some unknown reasons some archives have paths containing the name of previous files
+    # avoiding to write the new file, so let's use this work-around
+    set PATH filepath NAME
+    set TMP  filename NAME
+    string PATH R "." "_"
+    string NAME p "%s/%s" PATH TMP
+
+    if ZSIZE == SIZE
+        log NAME OFFSET SIZE
+    else
+        clog NAME OFFSET ZSIZE SIZE
+    endif
+next i
+
+startfunction GET_NAME
+    savepos TMP
+    goto NAME_OFF
+    get NAMESZ short
+    getdstring NAME NAMESZ
+    goto TMP
+endfunction
