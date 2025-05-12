@@ -1,0 +1,333 @@
+# Shantae Advance: Risky Revolution! demo ROM-splitting script written by Random Talking Bush.
+# Use this in tandem with my respective Python scripts to extract graphics data from the game.
+
+endian little
+
+# There are two separate filetables for the game, one for Battle Mode, and one for the main game.
+
+math FileTableStart = 0x4020C
+goto FileTableStart 0 SEEK_SET
+get FileCount long
+math FileCount = 32 # Final release has 27 files.
+get FileStart long
+math FileStart + FileTableStart
+
+# File extensions are hardcoded as there seems to be no way to differentiate them otherwise.
+for i = 0 < FileCount
+	set FileNum = i
+	math FileNum + 1
+	if i == 12
+		string FileExt = ".scn"
+	elif i == 13
+		string FileExt = ".ts8"
+	elif i == 14
+		string FileExt = ".lyr"
+	elif i == 15
+		string FileExt = ".ts8"
+	elif i == 16
+		string FileExt = ".lyr"
+	elif i == 17
+		string FileExt = ".ts4"
+	elif i == 18
+		string FileExt = ".lyr"
+	elif i == 19
+		string FileExt = ".scn"
+	elif i == 21
+		string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
+	elif i == 28
+		string FileExt = ".scn"
+	elif i == 29
+		string FileExt = ".ts4"
+	elif i == 30
+		string FileExt = ".lyr"
+	else
+		string FileExt = ".anm"
+	endif
+
+	get NextOffset long
+	math NextOffset + FileTableStart
+	math FileSize = NextOffset
+	math FileSize - FileStart
+	if i == 31
+		math FileSize = 0x2FC
+	endif
+	string FilePath = "ShantaeGBADemo_Battle/"
+	string FilePath + FileNum
+	string FilePath + "_"
+	string FilePath + FileStart
+	string FilePath + FileExt
+	log FilePath FileStart FileSize
+
+# Let's split the tiles into separate files for ease-of-use.
+	if FileExt == ".anm"
+		savepos FileTableReturn
+		goto FileStart 0 SEEK_SET
+		get FrameFlags short
+		get FrameMaxPieces short
+		get FrameMaxBytes short
+		get FrameTotal short
+		get TileStart long
+		get TileSize long
+		math TileStart + FileStart
+		string FilePath = "ShantaeGBADemo_Battle/"
+		string FilePath + FileNum
+		string FilePath + "_"
+		string FilePath + FileStart
+		string FilePath + "_tiles.bin"
+		if TileSize != 0
+			log FilePath TileStart TileSize
+		endif
+		goto FileTableReturn 0 SEEK_SET
+	elif FileExt == ".ts4" or FileExt == ".ts8"
+		savepos FileTableReturn
+		goto FileStart 0 SEEK_SET
+		get TilesetFlags short
+		get MetatileCount short
+		math MetatileCount * 8
+		get TileSize short
+		savepos TileStart
+		math TileStart + MetatileCount
+		if FileExt == ".ts4"
+			math TileSize * 0x20
+		elif FileExt == ".ts8"
+			math TileSize * 0x40
+		endif
+		string FilePath = "ShantaeGBADemo_Battle/"
+		string FilePath + FileNum
+		string FilePath + "_"
+		string FilePath + FileStart
+		string FilePath + "_tiles.bin"
+		if TileSize != 0
+			log FilePath TileStart TileSize
+		endif
+		goto FileTableReturn 0 SEEK_SET
+	endif
+	math FileStart = NextOffset
+next i
+
+# Battle mode's unpacked, now for the main game.
+
+math FileTableStart = 0xF43E8 # Compared to the final release, this starts way further in instead of immediately after.
+goto FileTableStart 0 SEEK_SET
+get FileCount long # This has an actual file count listed in the final release. Demo and both versions of Battle Mode just has 0.
+math FileCount = 223 # Final release has 745 files.
+get FileStart long
+math FileStart + FileTableStart
+
+# File extensions are hardcoded as there's no way to determine them otherwise.
+for i = 0 < FileCount
+	set FileNum = i
+	math FileNum + 1
+	if i == 134
+		string FileExt = ".ts8"
+	elif i == 135
+		string FileExt = ".lyr"
+	elif i == 136
+		string FileExt = ".scn"
+	elif i == 137
+		string FileExt = ".ts4"
+	elif i == 138
+		string FileExt = ".lyr"
+	elif i == 139
+		string FileExt = ".scn"
+	elif i == 140
+		string FileExt = ".scn"
+	elif i == 141
+		string FileExt = ".ts4"
+	elif i == 142
+		string FileExt = ".ts8"
+	elif i == 143
+		string FileExt = ".lyr"
+	elif i == 144
+		string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
+	elif i == 145
+		string FileExt = ".ts4"
+	elif i == 146
+		string FileExt = ".lyr"
+	elif i == 147
+		string FileExt = ".ts4"
+	elif i == 148
+		string FileExt = ".lyr"
+	elif i == 149
+		string FileExt = ".ts4"
+	elif i == 150
+		string FileExt = ".lyr"
+	elif i == 151
+		string FileExt = ".scn"
+	elif i == 152
+		string FileExt = ".ts4"
+	elif i == 153
+		string FileExt = ".lyr"
+	elif i == 154
+		string FileExt = ".ts4"
+	elif i == 155
+		string FileExt = ".lyr"
+	elif i == 156
+		string FileExt = ".ts4"
+	elif i == 157
+		string FileExt = ".lyr"
+	elif i == 158
+		string FileExt = ".lyr"
+	elif i == 159
+		string FileExt = ".lyr"
+	elif i == 160
+		string FileExt = ".scn"
+	elif i == 161
+		string FileExt = ".ts4"
+	elif i == 162
+		string FileExt = ".lyr"
+	elif i == 163
+		string FileExt = ".ts8"
+	elif i == 164
+		string FileExt = ".lyr"
+	elif i == 165
+		string FileExt = ".scn"
+	elif i == 166
+		string FileExt = ".scn"
+	elif i == 167
+		string FileExt = ".ts4"
+	elif i == 168
+		string FileExt = ".lyr"
+	elif i == 169
+		string FileExt = ".lyr"
+	elif i == 170
+		string FileExt = ".lyr"
+	elif i == 172
+		string FileExt = ".pal"
+	elif i == 173
+		string FileExt = ".scn"
+	elif i == 174
+		string FileExt = ".ts4"
+	elif i == 175
+		string FileExt = ".lyr"
+	elif i == 176
+		string FileExt = ".lyr"
+	elif i == 177
+		string FileExt = ".ts4"
+	elif i == 178
+		string FileExt = ".lyr"
+	elif i == 179
+		string FileExt = ".lyr"
+	elif i == 180
+		string FileExt = ".lyr"
+	elif i == 185
+		string FileExt = ".scn"
+	elif i == 186
+		string FileExt = ".scn"
+	elif i == 187
+		string FileExt = ".ts8"
+	elif i == 188
+		string FileExt = ".lyr"
+	elif i == 189
+		string FileExt = ".ts8"
+	elif i == 190
+		string FileExt = ".lyr"
+	elif i == 191
+		string FileExt = ".ts4"
+	elif i == 192
+		string FileExt = ".lyr"
+	elif i == 194
+		string FileExt = ".scn"
+	elif i == 196
+		string FileExt = ".ts4"
+	elif i == 197
+		string FileExt = ".lyr"
+	elif i == 198
+		string FileExt = ".scn"
+	elif i == 199
+		string FileExt = ".ts8"
+	elif i == 200
+		string FileExt = ".lyr"
+	elif i == 201
+		string FileExt = ".scn"
+	elif i == 202
+		string FileExt = ".scn"
+	elif i == 203
+		string FileExt = ".ts8"
+	elif i == 204
+		string FileExt = ".lyr"
+	elif i == 205
+		string FileExt = ".scn"
+	elif i == 206
+		string FileExt = ".ts8"
+	elif i == 207
+		string FileExt = ".lyr"
+	elif i == 208
+		string FileExt = ".scn"
+	elif i == 209
+		string FileExt = ".ts8"
+	elif i == 210
+		string FileExt = ".lyr"
+	elif i == 214
+		string FileExt = ".pal"
+	elif i == 215
+		string FileExt = ".ts8"
+	elif i == 216
+		string FileExt = ".lyr"
+	elif i == 219
+		string FileExt = ".ts8"
+	elif i == 220
+		string FileExt = ".lyr"
+	elif i == 221
+		string FileExt = ".ts4"
+	else
+		string FileExt = ".anm"
+	endif
+
+	get NextOffset long
+	math NextOffset + FileTableStart
+	math FileSize = NextOffset
+	math FileSize - FileStart
+	string FilePath = "ShantaeGBADemo_Main/"
+	string FilePath + FileNum
+	string FilePath + "_"
+	string FilePath + FileStart
+	string FilePath + FileExt
+	log FilePath FileStart FileSize
+
+# Let's split the tiles into separate files for ease-of-use.
+	if FileExt == ".anm"
+		savepos FileTableReturn
+		goto FileStart 0 SEEK_SET
+		get FrameFlags short
+		get FrameMaxPieces short
+		get FrameMaxBytes short
+		get FrameTotal short
+		get TileStart long
+		get TileSize long
+		math TileStart + FileStart
+		string FilePath = "ShantaeGBADemo_Main/"
+		string FilePath + FileNum
+		string FilePath + "_"
+		string FilePath + FileStart
+		string FilePath + "_tiles.bin"
+		if TileSize != 0
+			log FilePath TileStart TileSize
+		endif
+		goto FileTableReturn 0 SEEK_SET
+	elif FileExt == ".ts4" or FileExt == ".ts8"
+		savepos FileTableReturn
+		goto FileStart 0 SEEK_SET
+		get TilesetFlags short
+		get MetatileCount short
+		math MetatileCount * 8
+		get TileSize short
+		savepos TileStart
+		math TileStart + MetatileCount
+		if FileExt == ".ts4"
+			math TileSize * 0x20
+		elif FileExt == ".ts8"
+			math TileSize * 0x40
+		endif
+		string FilePath = "ShantaeGBADemo_Main/"
+		string FilePath + FileNum
+		string FilePath + "_"
+		string FilePath + FileStart
+		string FilePath + "_tiles.bin"
+		if TileSize != 0
+			log FilePath TileStart TileSize
+		endif
+		goto FileTableReturn 0 SEEK_SET
+	endif
+	math FileStart = NextOffset
+next i

@@ -70,9 +70,9 @@ for i = 0 < FileCount
 	if FileExt == ".anm"
 		savepos FileTableReturn
 		goto FileStart 0 SEEK_SET
-		get FrameUnkA short
-		get FrameUnkB short
-		get FrameUnkC short
+		get FrameFlags short
+		get FrameMaxPieces short
+		get FrameMaxBytes short
 		get FrameTotal short
 		get TileStart long
 		get TileSize long
@@ -87,7 +87,7 @@ for i = 0 < FileCount
 	elif FileExt == ".ts4" or FileExt == ".ts8"
 		savepos FileTableReturn
 		goto FileStart 0 SEEK_SET
-		get MetatileUnk short
+		get TilesetFlags short
 		get MetatileCount short
 		math MetatileCount * 8
 		get TileSize short
@@ -971,11 +971,11 @@ for i = 0 < FileCount
 	elif FileExt == ".ts4" or FileExt == ".ts8"
 		savepos FileTableReturn
 		goto FileStart 0 SEEK_SET
-		get MetatileUnk short
+		get TilesetFlags short
 		get MetatileCount short
 		math MetatileCount * 8
 		get TileSize short
-		get MetatileUnkB short # This isn't included in the Battle Mode TS4/8 files.
+		get MetatileUnk short # This isn't included in the Battle Mode TS4/8 files.
 		savepos TileStart
 		math TileStart + MetatileCount
 		if FileExt == ".ts4"
