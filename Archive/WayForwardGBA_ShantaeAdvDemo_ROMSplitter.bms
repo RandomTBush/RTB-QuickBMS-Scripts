@@ -3,6 +3,8 @@
 
 endian little
 
+# This is where I'd put a header check... if it had one.
+
 # There are two separate filetables for the game, one for Battle Mode, and one for the main game.
 
 math FileTableStart = 0x4020C

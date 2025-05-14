@@ -1,4 +1,4 @@
-# The Scorpion King: Sword of Osiris ROM-splitting script written by Random Talking Bush.
+# Looney Tunes: Double Pack - Dizzy Driving / Acme Antics ROM-splitting script written by Random Talking Bush.
 # Use this in tandem with my respective Python scripts to extract graphics data from the game.
 
 endian little
@@ -6,11 +6,10 @@ endian little
 goto 0xA0 0 SEEK_SET
 getdstring HeaderCheck 0x0C
 
-if HeaderCheck == "SCORPIONKING"
-	math FileTableStart = 0xA9894
+if HeaderCheck == "LOONEYTUNES2"
+	math FileTableStart = 0x1B9914
 	goto FileTableStart 0 SEEK_SET
 	get FileCount long
-	math FileCount = 253
 	get FileStart long
 	math FileStart + FileTableStart
 
@@ -19,194 +18,222 @@ if HeaderCheck == "SCORPIONKING"
 		set FileNum = i
 		math FileNum + 1
 		if i == 0
-			string FileExt = ".lyr"
-		elif i == 1
 			string FileExt = ".scn"
-		elif i == 4
+		elif i == 1
+			string FileExt = ".ts4"
+		elif i == 2
 			string FileExt = ".lyr"
+		elif i == 3
+			string FileExt = ".ts4"
+		elif i == 4
+			string FileExt = ".typ" # Collision chart file?, "TYPES.TYP".
+		elif i == 5
+			string FileExt = ".typ" # Collision chart file?, "TYPES.TYP".
+		elif i == 7
+			string FileExt = ".ts8"
 		elif i == 8
 			string FileExt = ".lyr"
+		elif i == 9
+			string FileExt = ".scn"
 		elif i == 10
-			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
+			string FileExt = ".scn"
+		elif i == 11
+			string FileExt = ".ts8"
+		elif i == 12
+			string FileExt = ".lyr"
+		elif i == 13
+			string FileExt = ".ts8"
+		elif i == 14
+			string FileExt = ".lyr"
+		elif i == 15
+			string FileExt = ".scn"
+		elif i == 17
+			string FileExt = ".ts8"
+		elif i == 18
+			string FileExt = ".lyr"
+		elif i == 19
+			string FileExt = ".scn"
 		elif i == 20
+			string FileExt = ".ts8"
+		elif i == 21
+			string FileExt = ".lyr"
+		elif i == 22
+			string FileExt = ".scn"
+		elif i == 24
+			string FileExt = ".ts8"
+		elif i == 25
 			string FileExt = ".lyr"
 		elif i == 26
-			string FileExt = ".lyr"
-		elif i == 27
-			string FileExt = ".lyr"
-		elif i == 28
-			string FileExt = ".lyr"
-		elif i == 29
-			string FileExt = ".lyr"
-		elif i == 30
 			string FileExt = ".scn"
+		elif i == 30
+			string FileExt = ".ts8"
 		elif i == 31
 			string FileExt = ".lyr"
 		elif i == 32
-			string FileExt = ".scn"
+			string FileExt = ".ts8"
 		elif i == 33
-			string FileExt = ".scn"
+			string FileExt = ".lyr"
 		elif i == 34
-			string FileExt = ".lyr"
+			string FileExt = ".scn"
+		elif i == 38
+			string FileExt = ".ts8"
 		elif i == 39
-			string FileExt = ".scn"
+			string FileExt = ".lyr"
 		elif i == 40
-			string FileExt = ".lyr"
-		elif i == 41
-			string FileExt = ".lyr"
-		elif i == 43
 			string FileExt = ".scn"
-		elif i == 45
+		elif i == 43
+			string FileExt = ".ts8"
+		elif i == 44
 			string FileExt = ".lyr"
 		elif i == 46
 			string FileExt = ".scn"
+		elif i == 47
+			string FileExt = ".ts8"
 		elif i == 48
 			string FileExt = ".lyr"
-		elif i == 49
-			string FileExt = ".lyr"
-		elif i == 50
-			string FileExt = ".lyr"
-		elif i == 52
-			string FileExt = ".scn"
 		elif i == 53
 			string FileExt = ".scn"
-		elif i == 54
-			string FileExt = ".scn"
+		elif i == 55
+			string FileExt = ".ts8"
 		elif i == 56
 			string FileExt = ".lyr"
-		elif i == 63
+		elif i == 69
+			string FileExt = ".ts8"
+		elif i == 70
+			string FileExt = ".lyr"
+		elif i == 71
 			string FileExt = ".scn"
-		elif i == 64
-			string FileExt = ".lyr"
-		elif i == 65
-			string FileExt = ".scn"
-		elif i == 66
-			string FileExt = ".lyr"
-		elif i == 68
-			string FileExt = ".lyr"
 		elif i == 72
 			string FileExt = ".scn"
 		elif i == 73
-			string FileExt = ".lyr"
+			string FileExt = ".ts8"
 		elif i == 74
 			string FileExt = ".lyr"
-		elif i == 75
-			string FileExt = ".lyr"
 		elif i == 76
-			string FileExt = ".scn"
+			string FileExt = ".ts8"
 		elif i == 77
+			string FileExt = ".lyr"
+		elif i == 78
 			string FileExt = ".scn"
 		elif i == 79
-			string FileExt = ".scn"
+			string FileExt = ".ts8"
 		elif i == 80
 			string FileExt = ".lyr"
 		elif i == 81
 			string FileExt = ".scn"
-		elif i == 82
-			string FileExt = ".lyr"
 		elif i == 83
 			string FileExt = ".scn"
-		elif i == 84
+		elif i == 94
+			string FileExt = ".ts8"
+		elif i == 95
 			string FileExt = ".lyr"
-		elif i == 85
+		elif i == 99
+			string FileExt = ".ts8"
+		elif i == 100
 			string FileExt = ".lyr"
-		elif i == 91
-			string FileExt = ".lyr"
-		elif i == 92
-			string FileExt = ".lyr"
-		elif i == 96
+		elif i == 101
 			string FileExt = ".scn"
-		elif i == 97
-			string FileExt = ".lyr"
-		elif i == 103
+		elif i == 102
 			string FileExt = ".scn"
+		elif i == 105
+			string FileExt = ".ts8"
 		elif i == 106
-			string FileExt = ".scn"
-		elif i == 107
 			string FileExt = ".lyr"
-		elif i == 108
+		elif i == 107
 			string FileExt = ".scn"
+		elif i == 108
+			string FileExt = ".ts8"
 		elif i == 109
 			string FileExt = ".lyr"
 		elif i == 110
-			string FileExt = ".lyr"
+			string FileExt = ".scn"
 		elif i == 111
-			string FileExt = ".lyr"
+			string FileExt = ".ts8"
 		elif i == 112
 			string FileExt = ".lyr"
 		elif i == 113
-			string FileExt = ".scn"
+			string FileExt = ".ts8"
+		elif i == 114
+			string FileExt = ".lyr"
+		elif i == 115
+			string FileExt = ".ts8"
+		elif i == 116
+			string FileExt = ".lyr"
 		elif i == 117
 			string FileExt = ".scn"
 		elif i == 118
 			string FileExt = ".scn"
-		elif i == 119
-			string FileExt = ".lyr"
 		elif i == 120
-			string FileExt = ".scn"
+			string FileExt = ".ts8"
 		elif i == 121
 			string FileExt = ".lyr"
 		elif i == 122
-			string FileExt = ".scn"
+			string FileExt = ".ts8"
 		elif i == 123
 			string FileExt = ".lyr"
 		elif i == 124
-			string FileExt = ".lyr"
+			string FileExt = ".ts8"
 		elif i == 125
-			string FileExt = ".scn"
+			string FileExt = ".lyr"
 		elif i == 126
+			string FileExt = ".ts8"
+		elif i == 127
 			string FileExt = ".lyr"
 		elif i == 128
-			string FileExt = ".lyr"
+			string FileExt = ".ts8"
 		elif i == 129
 			string FileExt = ".lyr"
+		elif i == 130
+			string FileExt = ".ts8"
 		elif i == 131
 			string FileExt = ".lyr"
 		elif i == 132
-			string FileExt = ".scn"
+			string FileExt = ".ts8"
 		elif i == 133
 			string FileExt = ".lyr"
 		elif i == 134
-			string FileExt = ".scn"
+			string FileExt = ".ts8"
 		elif i == 135
 			string FileExt = ".lyr"
 		elif i == 136
 			string FileExt = ".scn"
 		elif i == 137
-			string FileExt = ".lyr"
+			string FileExt = ".scn"
 		elif i == 138
-			string FileExt = ".lyr"
+			string FileExt = ".scn"
 		elif i == 139
 			string FileExt = ".scn"
 		elif i == 140
-			string FileExt = ".lyr"
+			string FileExt = ".scn"
 		elif i == 141
 			string FileExt = ".scn"
 		elif i == 142
-			string FileExt = ".lyr"
+			string FileExt = ".scn"
 		elif i == 143
-			string FileExt = ".lyr"
-		elif i == 144
 			string FileExt = ".scn"
-		elif i == 145
-			string FileExt = ".lyr"
 		elif i == 146
-			string FileExt = ".scn"
-		elif i == 149
-			string FileExt = ".scn"
-		elif i == 150
+			string FileExt = ".ts8"
+		elif i == 147
 			string FileExt = ".lyr"
-		elif i == 151
-			string FileExt = ".lyr"
+		elif i == 148
+			string FileExt = ".scn"
+		elif i == 153
+			string FileExt = ".ts8"
 		elif i == 154
 			string FileExt = ".lyr"
-		elif i == 157
-			string FileExt = ".lyr"
-		elif i == 158
+		elif i == 155
 			string FileExt = ".scn"
+		elif i == 156
+			string FileExt = ".scn"
+		elif i == 157
+			string FileExt = ".ts4"
+		elif i == 158
+			string FileExt = ".lyr"
 		elif i == 159
 			string FileExt = ".lyr"
 		elif i == 160
+			string FileExt = ".lyr"
+		elif i == 161
 			string FileExt = ".lyr"
 		elif i == 162
 			string FileExt = ".lyr"
@@ -214,148 +241,134 @@ if HeaderCheck == "SCORPIONKING"
 			string FileExt = ".lyr"
 		elif i == 164
 			string FileExt = ".lyr"
+		elif i == 165
+			string FileExt = ".lyr"
+		elif i == 166
+			string FileExt = ".lyr"
 		elif i == 167
+			string FileExt = ".lyr"
+		elif i == 168
+			string FileExt = ".lyr"
+		elif i == 169
+			string FileExt = ".lyr"
+		elif i == 170
 			string FileExt = ".lyr"
 		elif i == 171
 			string FileExt = ".lyr"
 		elif i == 172
+			string FileExt = ".lyr"
+		elif i == 173
+			string FileExt = ".lyr"
+		elif i == 174
+			string FileExt = ".lyr"
+		elif i == 175
+			string FileExt = ".lyr"
+		elif i == 176
+			string FileExt = ".scn"
+		elif i == 177
+			string FileExt = ".scn"
+		elif i == 178
+			string FileExt = ".scn"
+		elif i == 179
+			string FileExt = ".scn"
+		elif i == 180
 			string FileExt = ".scn"
 		elif i == 181
-			string FileExt = ".lyr"
+			string FileExt = ".scn"
 		elif i == 182
-			string FileExt = ".lyr"
+			string FileExt = ".scn"
 		elif i == 183
-			string FileExt = ".lyr"
+			string FileExt = ".scn"
 		elif i == 184
 			string FileExt = ".scn"
 		elif i == 185
-			string FileExt = ".lyr"
+			string FileExt = ".scn"
 		elif i == 186
-			string FileExt = ".lyr"
+			string FileExt = ".scn"
 		elif i == 187
-			string FileExt = ".lyr"
+			string FileExt = ".scn"
+		elif i == 188
+			string FileExt = ".scn"
+		elif i == 189
+			string FileExt = ".ts4"
 		elif i == 190
 			string FileExt = ".lyr"
 		elif i == 191
-			string FileExt = ".lyr"
+			string FileExt = ".ts4"
 		elif i == 192
 			string FileExt = ".lyr"
 		elif i == 193
-			string FileExt = ".lyr"
-		elif i == 194
 			string FileExt = ".scn"
-		elif i == 196
-			string FileExt = ".lyr"
-		elif i == 197
-			string FileExt = ".lyr"
-		elif i == 198
-			string FileExt = ".lyr"
-		elif i == 199
-			string FileExt = ".scn"
-		elif i == 201
-			string FileExt = ".lyr"
-		elif i == 202
-			string FileExt = ".lyr"
-		elif i == 203
-			string FileExt = ".lyr"
-		elif i == 204
-			string FileExt = ".lyr"
-		elif i == 205
-			string FileExt = ".lyr"
-		elif i == 206
-			string FileExt = ".lyr"
-		elif i == 207
-			string FileExt = ".lyr"
-		elif i == 208
-			string FileExt = ".lyr"
-		elif i == 209
-			string FileExt = ".lyr"
-		elif i == 210
-			string FileExt = ".lyr"
-		elif i == 211
-			string FileExt = ".lyr"
-		elif i == 212
-			string FileExt = ".lyr"
-		elif i == 213
-			string FileExt = ".lyr"
-		elif i == 214
-			string FileExt = ".lyr"
-		elif i == 215
-			string FileExt = ".lyr"
-		elif i == 216
-			string FileExt = ".lyr"
-		elif i == 217
-			string FileExt = ".lyr"
-		elif i == 218
-			string FileExt = ".lyr"
-		elif i == 219
-			string FileExt = ".scn"
-		elif i == 220
-			string FileExt = ".lyr"
-		elif i == 221
-			string FileExt = ".ts4"
-		elif i == 222
-			string FileExt = ".ts4"
-		elif i == 223
-			string FileExt = ".ts4"
-		elif i == 224
-			string FileExt = ".ts4"
-		elif i == 225
-			string FileExt = ".ts4"
-		elif i == 226
-			string FileExt = ".ts4"
-		elif i == 227
-			string FileExt = ".ts4"
-		elif i == 228
-			string FileExt = ".ts4"
-		elif i == 229
-			string FileExt = ".ts4"
-		elif i == 230
-			string FileExt = ".ts4"
-		elif i == 231
-			string FileExt = ".ts4"
-		elif i == 232
-			string FileExt = ".ts8"
-		elif i == 233
-			string FileExt = ".ts4"
-		elif i == 234
-			string FileExt = ".ts4"
-		elif i == 235
-			string FileExt = ".ts4"
-		elif i == 236
-			string FileExt = ".ts8"
-		elif i == 237
-			string FileExt = ".ts4"
-		elif i == 238
-			string FileExt = ".ts4"
-		elif i == 239
-			string FileExt = ".ts4"
-		elif i == 240
-			string FileExt = ".ts8"
-		elif i == 241
-			string FileExt = ".ts8"
-		elif i == 242
-			string FileExt = ".ts8"
-		elif i == 243
-			string FileExt = ".ts4"
-		elif i == 244
-			string FileExt = ".ts4"
-		elif i == 245
-			string FileExt = ".ts4"
-		elif i == 246
-			string FileExt = ".ts4"
-		elif i == 247
-			string FileExt = ".ts4"
 		elif i == 248
 			string FileExt = ".ts4"
 		elif i == 249
-			string FileExt = ".ts4"
+			string FileExt = ".lyr"
 		elif i == 250
-			string FileExt = ".ts8"
+			string FileExt = ".lyr"
 		elif i == 251
-			string FileExt = ".ts4"
+			string FileExt = ".lyr"
 		elif i == 252
-			string FileExt = ".ts8"
+			string FileExt = ".lyr"
+		elif i == 253
+			string FileExt = ".lyr"
+		elif i == 254
+			string FileExt = ".lyr"
+		elif i == 255
+			string FileExt = ".lyr"
+		elif i == 256
+			string FileExt = ".lyr"
+		elif i == 257
+			string FileExt = ".lyr"
+		elif i == 258
+			string FileExt = ".lyr"
+		elif i == 259
+			string FileExt = ".lyr"
+		elif i == 260
+			string FileExt = ".lyr"
+		elif i == 261
+			string FileExt = ".lyr"
+		elif i == 262
+			string FileExt = ".lyr"
+		elif i == 263
+			string FileExt = ".lyr"
+		elif i == 264
+			string FileExt = ".lyr"
+		elif i == 265
+			string FileExt = ".lyr"
+		elif i == 266
+			string FileExt = ".lyr"
+		elif i == 267
+			string FileExt = ".lyr"
+		elif i == 268
+			string FileExt = ".lyr"
+		elif i == 269
+			string FileExt = ".scn"
+		elif i == 270
+			string FileExt = ".scn"
+		elif i == 271
+			string FileExt = ".scn"
+		elif i == 272
+			string FileExt = ".scn"
+		elif i == 273
+			string FileExt = ".scn"
+		elif i == 274
+			string FileExt = ".scn"
+		elif i == 275
+			string FileExt = ".scn"
+		elif i == 276
+			string FileExt = ".scn"
+		elif i == 277
+			string FileExt = ".scn"
+		elif i == 278
+			string FileExt = ".scn"
+		elif i == 279
+			string FileExt = ".scn"
+		elif i == 280
+			string FileExt = ".scn"
+		elif i == 281
+			string FileExt = ".scn"
+		elif i == 308
+			string FileExt = ".bin" # Not sure what this is.
 		else
 			string FileExt = ".anm"
 		endif
@@ -364,10 +377,10 @@ if HeaderCheck == "SCORPIONKING"
 		math NextOffset + FileTableStart
 		math FileSize = NextOffset
 		math FileSize - FileStart
-		if i == 252
-			math FileSize = 0x83F6
+		if i == 308
+			math FileSize = 0x718
 		endif
-		string FilePath = "ScorpionKing/"
+		string FilePath = "LooneyTunesDP/"
 		string FilePath + FileNum
 		string FilePath + "_"
 		string FilePath + FileStart
@@ -382,12 +395,10 @@ if HeaderCheck == "SCORPIONKING"
 			get FrameMaxPieces short
 			get FrameMaxBytes short
 			get FrameTotal short
-			get BoundsX long
-			get BoundsY long
 			get TileStart long
 			get TileSize long
 			math TileStart + FileStart
-			string FilePath = "ScorpionKing/"
+			string FilePath = "LooneyTunesDP/"
 			string FilePath + FileNum
 			string FilePath + "_"
 			string FilePath + FileStart
@@ -403,6 +414,7 @@ if HeaderCheck == "SCORPIONKING"
 			get MetatileCount short
 			math MetatileCount * 8
 			get TileSize short
+			get MetatileUnk short
 			savepos TileStart
 			math TileStart + MetatileCount
 			if FileExt == ".ts4"
@@ -410,7 +422,7 @@ if HeaderCheck == "SCORPIONKING"
 			elif FileExt == ".ts8"
 				math TileSize * 0x40
 			endif
-			string FilePath = "ScorpionKing/"
+			string FilePath = "LooneyTunesDP/"
 			string FilePath + FileNum
 			string FilePath + "_"
 			string FilePath + FileStart
