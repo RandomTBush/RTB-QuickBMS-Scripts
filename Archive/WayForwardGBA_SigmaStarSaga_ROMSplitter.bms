@@ -39,7 +39,7 @@ if HeaderCheck == "SIGMA STAR"
 		elif i == 9
 			string FileExt = ".lyr"
 		elif i == 10
-			string FileExt = ".typ"
+			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
 		elif i == 37
 			string FileExt = ".bin" # No idea what this is supposed to be.
 		elif i == 118
@@ -527,7 +527,11 @@ if HeaderCheck == "SIGMA STAR"
 			append
 				clog MEMORY_FILE ScreenStart CompSize FileSize
 			append
-			putVarChr MEMORY_FILE 0x00 0x10 byte
+			if ScreenFlags == 0x0090
+				putVarChr MEMORY_FILE 0x00 0x10 byte
+			elif ScreenFlags == 0x00A0
+				putVarChr MEMORY_FILE 0x00 0x20 byte
+			endif
 			get ScreenDecSize asize MEMORY_FILE
 			log FilePath 0 ScreenDecSize MEMORY_FILE
 			goto FileTableReturn 0 SEEK_SET
@@ -571,7 +575,7 @@ if HeaderCheck == "SIGMA STAR"
 		set FileNum = i
 		math FileNum + 1
 		if i == 0
-			string FileExt = ".typ"
+			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
 		elif i == 1
 			string FileExt = ".ts4"
 		elif i == 2
@@ -951,7 +955,11 @@ if HeaderCheck == "SIGMA STAR"
 			append
 				clog MEMORY_FILE ScreenStart CompSize FileSize
 			append
-			putVarChr MEMORY_FILE 0x00 0x10 byte
+			if ScreenFlags == 0x0090
+				putVarChr MEMORY_FILE 0x00 0x10 byte
+			elif ScreenFlags == 0x00A0
+				putVarChr MEMORY_FILE 0x00 0x20 byte
+			endif
 			get ScreenDecSize asize MEMORY_FILE
 			log FilePath 0 ScreenDecSize MEMORY_FILE
 			goto FileTableReturn 0 SEEK_SET

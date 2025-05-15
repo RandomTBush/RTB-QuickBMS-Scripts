@@ -1,0 +1,1049 @@
+# Godzilla: Domination! ROM-splitting script written by Random Talking Bush.
+# The Japanese version is also supported due to its large amount of differences.
+# .TS4 files for the Single Pak mode have an unknown compression (but only in the US version!), so we'll work around that.
+# Use this in tandem with my respective Python scripts to extract graphics data from the game.
+
+endian little
+
+goto 0xA0 0 SEEK_SET
+getdstring HeaderCheck 0x0C
+
+if HeaderCheck == "GODZILLADOMI"
+	# There are two separate filetables for the game. First one's for VS Mode (Single Pak), second is for the main game.
+
+	math FileTableStart = 0x6376C
+	goto FileTableStart 0 SEEK_SET
+	get FileCount long
+	math FileCount = 36
+	get FileStart long
+	math FileStart + FileTableStart
+
+	# File extensions are hardcoded as there seems to be no way to differentiate them otherwise.
+	for i = 0 < FileCount
+		set FileNum = i
+		math FileNum + 1
+		if i == 0
+			string FileExt = ".bin" # Screen fades?
+		elif i == 1
+			string FileExt = ".typ" # A 0-byte file, but this would presumably be a collision chart file, "TYPES.TYP".
+		elif i == 2
+			string FileExt = ".pal"
+		elif i == 3
+			string FileExt = ".ts4" # Variant of file ID 23 in the main game, error message font tileset.
+		elif i == 4
+			string FileExt = ".lyr"
+		elif i == 5
+			string FileExt = ".scn"
+		elif i == 6
+			string FileExt = ".ts4" # Copy of file ID 12 in the main game, HUD tileset.
+		elif i == 7
+			string FileExt = ".lyr"
+		elif i == 32
+			string FileExt = ".ts4" # Copy of file ID 292 in the main game, city tileset.
+		elif i == 33
+			string FileExt = ".lyr"
+		elif i == 34
+			string FileExt = ".lyr"
+		elif i == 35
+			string FileExt = ".scn"
+		else
+			string FileExt = ".anm"
+		endif
+
+		get NextOffset long
+		math NextOffset + FileTableStart
+		math FileSize = NextOffset
+		math FileSize - FileStart
+		if i == 35
+			math FileSize = 0x430
+		endif
+		string FilePath = "GodzillaDomination_SinglePak/"
+		string FilePath + FileNum
+		string FilePath + "_"
+		string FilePath + FileStart
+		string FilePath + FileExt
+		# Gonna hijack the procedure here...
+		if i == 3
+			print "Compressed file, changing plans..."
+		elif i == 6
+			print "Compressed file, changing plans..."
+			log FilePath 0x120F5C 0x10D0
+		elif i == 32
+			print "Compressed file, changing plans..."
+			log FilePath 0x32FF84 0x5258
+		else
+			log FilePath FileStart FileSize
+		endif
+
+		# Let's split the tiles into separate files for ease-of-use.
+		if FileExt == ".anm"
+			savepos FileTableReturn
+			goto FileStart 0 SEEK_SET
+			get FrameFlags short
+			get FrameMaxPieces short
+			get FrameMaxBytes short
+			get FrameTotal short
+			get TileStart long
+			get TileSize long
+			math TileStart + FileStart
+			string FilePath = "GodzillaDomination_SinglePak/"
+			string FilePath + FileNum
+			string FilePath + "_"
+			string FilePath + FileStart
+			string FilePath + "_tiles.bin"
+			if TileSize != 0
+				log FilePath TileStart TileSize
+			endif
+			goto FileTableReturn 0 SEEK_SET
+		elif FileExt == ".ts4"
+			savepos FileTableReturn
+			# Gonna hijack the procedure here...
+			# There are exactly three files in this game (and across WayForward's *entire* GBA library, as far as I'm aware!) which are compressed, and they're only used for the game's Single Pak mode.
+			# Unlike WayForward's other games, these compressed files don't use LZ77 like in their other releases, and after a few hours of attempts I wasn't able to figure out the algorithm.
+			# Seeing as how two of those files are exact copies of ones already in the base game when decompressed, and the third (first, technically) has exactly file tiles changed and two removed...
+			# It made more sense to just copy what was already there, and make changes where necessary. "Work smarter, not harder", as the saying goes.
+			if i == 3
+				log MEMORY_FILE 0 0
+				set MEMORY_FILE2 binary "\x55\xB5\x55\x55\x55\x8C\x55\x55\xD5\x58\x55\x55\xF5\x55\x55\x55\xD5\x55\x55\x55\x85\x5C\x55\x55\x55\xB8\x55\x55\x55\x85\x55\x55\x55\x5B\x55\x55\x55\xC8\x55\x55\x55\x85\x5D\x55\x55\x55\x5F\x55\x55\x55\x5D\x55\x55\xC5\x58\x55\x55\x8B\x55\x55\x55\x58\x55\x55\x55\xC5\x55\x55\x55\xF5\x5C\x55\xF5\xFF\xCF\x55\xF5\xFF\xFF\x5C\xF5\xFF\xDF\x5B\xB5\xFB\xBD\x55\x85\xC8\x5B\x55\x55\xB5\x55\x55\x55\x55\x55\x55\x55\xC5\x55\x55\x55\xD5\x55\x55\xF5\xFF\xFF\x55\x85\xD8\x88\x55\x55\xC5\x55\x55\x55\x85\x55\x55\x55\x55\x55\x55" # First four font tile changes.
+				set MEMORY_FILE3 binary "\xD0\x16\xD6\x00\x60\x00\x10\x00\x10\x00\x00\x00\x10\x00\x00\x00\x60\x00\x10\x00\xD0\x16\xD6\x00\x00\x1F\x0F\x00\x00\x10\x00\x00" # Fifth font tile change.
+				log MEMORY_FILE FileStart 0x21E # Logging the header.
+				putVarChr MEMORY_FILE 0x00 0x00 byte # Removing the compression flag byte.
+				append
+					log MEMORY_FILE 0x134FD6 0x120 # Copying first set of unchanged font tiles.
+					log MEMORY_FILE 0 0x80 MEMORY_FILE2 # Swapping out the first four tile differences -- (, ), right arrow and +.
+					log MEMORY_FILE 0x135176 0xB60 # Copying over the second set of unchanged font tiles.
+					log MEMORY_FILE 0 0x20 MEMORY_FILE3 # Swapping out the fifth tile -- c with cedilla.
+					log MEMORY_FILE 0x135CF6 0x380 # Copying over the last set of unchanged font tiles, minus the last two which aren't in this version of the tileset.
+				append
+
+				get FileSize asize MEMORY_FILE
+				log FilePath 0 FileSize MEMORY_FILE
+				string FilePath = "GodzillaDomination_SinglePak/"
+				string FilePath + FileNum
+				string FilePath + "_"
+				string FilePath + FileStart
+				string FilePath + "_tiles.bin"
+				log FilePath 0x21E 0x10A0 MEMORY_FILE
+			else
+				if i == 6
+					goto 0x120F5C 0 SEEK_SET
+				elif i == 32
+					goto 0x32FF84 0 SEEK_SET
+				endif
+				get TilesetFlags short
+				get MetatileCount short
+				math MetatileCount * 8
+				get TileSize short
+				savepos TileStart
+				math TileStart + MetatileCount
+				math TileSize * 0x20
+				string FilePath = "GodzillaDomination_SinglePak/"
+				string FilePath + FileNum
+				string FilePath + "_"
+				string FilePath + FileStart
+				string FilePath + "_tiles.bin"
+				if TileSize != 0
+					log FilePath TileStart TileSize
+				endif
+			endif
+			goto FileTableReturn 0 SEEK_SET
+		endif
+		math FileStart = NextOffset
+	next i
+
+	# Second table's used for the main game itself.
+
+	math FileTableStart = 0x111D38
+	goto FileTableStart 0 SEEK_SET
+	get FileCount long
+	math FileCount = 383
+	get FileStart long
+	math FileStart + FileTableStart
+
+	# File extensions are hardcoded as there seems to be no way to differentiate them otherwise.
+	for i = 0 < FileCount
+		set FileNum = i
+		math FileNum + 1
+		if i == 0
+			string FileExt = ".bin" # Screen fades?
+		elif i == 1
+			string FileExt = ".typ" # A 0-byte file, but this would presumably be a collision chart file, "TYPES.TYP".
+		elif i == 2
+			string FileExt = ".scn"
+		elif i == 3
+			string FileExt = ".ts8"
+		elif i == 4
+			string FileExt = ".lyr"
+		elif i == 5
+			string FileExt = ".scn"
+		elif i == 6
+			string FileExt = ".ts8"
+		elif i == 7
+			string FileExt = ".lyr"
+		elif i == 8
+			string FileExt = ".scn"
+		elif i == 9
+			string FileExt = ".ts4"
+		elif i == 10
+			string FileExt = ".lyr"
+		elif i == 11
+			string FileExt = ".ts4"
+		elif i == 12
+			string FileExt = ".lyr"
+		elif i == 13
+			string FileExt = ".pal"
+		elif i == 14
+			string FileExt = ".ts4"
+		elif i == 15
+			string FileExt = ".lyr"
+		elif i == 16
+			string FileExt = ".scn"
+		elif i == 17
+			string FileExt = ".ts8"
+		elif i == 18
+			string FileExt = ".lyr"
+		elif i == 19
+			string FileExt = ".scn"
+		elif i == 20
+			string FileExt = ".ts4"
+		elif i == 21
+			string FileExt = ".lyr"
+		elif i == 22
+			string FileExt = ".ts4"
+		elif i == 23
+			string FileExt = ".lyr"
+		elif i == 24
+			string FileExt = ".lyr"
+		elif i == 25
+			string FileExt = ".ts4"
+		elif i == 234
+			string FileExt = ".scn"
+		elif i == 235
+			string FileExt = ".ts4"
+		elif i == 236
+			string FileExt = ".lyr"
+		elif i == 237
+			string FileExt = ".lyr"
+		elif i == 238
+			string FileExt = ".ts4"
+		elif i == 239
+			string FileExt = ".lyr"
+		elif i == 240
+			string FileExt = ".lyr"
+		elif i == 241
+			string FileExt = ".ts4"
+		elif i == 242
+			string FileExt = ".lyr"
+		elif i == 243
+			string FileExt = ".scn"
+		elif i == 244
+			string FileExt = ".ts4"
+		elif i == 245
+			string FileExt = ".lyr"
+		elif i == 246
+			string FileExt = ".lyr"
+		elif i == 247
+			string FileExt = ".lyr"
+		elif i == 248
+			string FileExt = ".pal"
+		elif i == 249
+			string FileExt = ".pal"
+		elif i == 250
+			string FileExt = ".pal"
+		elif i == 251
+			string FileExt = ".pal"
+		elif i == 252
+			string FileExt = ".scn"
+		elif i == 253
+			string FileExt = ".ts4"
+		elif i == 254
+			string FileExt = ".lyr"
+		elif i == 255
+			string FileExt = ".lyr"
+		elif i == 256
+			string FileExt = ".lyr"
+		elif i == 257
+			string FileExt = ".lyr"
+		elif i == 258
+			string FileExt = ".ts4"
+		elif i == 259
+			string FileExt = ".lyr"
+		elif i == 260
+			string FileExt = ".scn"
+		elif i == 261
+			string FileExt = ".ts4"
+		elif i == 262
+			string FileExt = ".lyr"
+		elif i == 263
+			string FileExt = ".lyr"
+		elif i == 264
+			string FileExt = ".ts4"
+		elif i == 265
+			string FileExt = ".lyr"
+		elif i == 266
+			string FileExt = ".lyr"
+		elif i == 267
+			string FileExt = ".lyr"
+		elif i == 268
+			string FileExt = ".ts4"
+		elif i == 269
+			string FileExt = ".lyr"
+		elif i == 270
+			string FileExt = ".lyr"
+		elif i == 271
+			string FileExt = ".scn"
+		elif i == 272
+			string FileExt = ".ts8"
+		elif i == 273
+			string FileExt = ".lyr"
+		elif i == 274
+			string FileExt = ".lyr"
+		elif i == 275
+			string FileExt = ".scn"
+		elif i == 276
+			string FileExt = ".scn"
+		elif i == 277
+			string FileExt = ".ts8"
+		elif i == 278
+			string FileExt = ".lyr"
+		elif i == 279
+			string FileExt = ".scn"
+		elif i == 280
+			string FileExt = ".scn"
+		elif i == 281
+			string FileExt = ".ts4"
+		elif i == 282
+			string FileExt = ".lyr"
+		elif i == 283
+			string FileExt = ".lyr"
+		elif i == 284
+			string FileExt = ".lyr"
+		elif i == 285
+			string FileExt = ".lyr"
+		elif i == 286
+			string FileExt = ".ts4"
+		elif i == 287
+			string FileExt = ".lyr"
+		elif i == 288
+			string FileExt = ".lyr"
+		elif i == 289
+			string FileExt = ".lyr"
+		elif i == 290
+			string FileExt = ".scn"
+		elif i == 291
+			string FileExt = ".ts4"
+		elif i == 292
+			string FileExt = ".lyr"
+		elif i == 293
+			string FileExt = ".scn"
+		elif i == 294
+			string FileExt = ".ts4"
+		elif i == 295
+			string FileExt = ".lyr"
+		elif i == 296
+			string FileExt = ".lyr"
+		elif i == 297
+			string FileExt = ".lyr"
+		elif i == 298
+			string FileExt = ".lyr"
+		elif i == 299
+			string FileExt = ".ts4"
+		elif i == 300
+			string FileExt = ".lyr"
+		elif i == 301
+			string FileExt = ".lyr"
+		elif i == 302
+			string FileExt = ".scn"
+		elif i == 303
+			string FileExt = ".scn"
+		elif i == 304
+			string FileExt = ".ts8"
+		elif i == 305
+			string FileExt = ".lyr"
+		elif i == 306
+			string FileExt = ".ts8"
+		elif i == 307
+			string FileExt = ".lyr"
+		elif i == 308
+			string FileExt = ".ts8"
+		elif i == 309
+			string FileExt = ".lyr"
+		elif i == 310
+			string FileExt = ".ts8"
+		elif i == 311
+			string FileExt = ".lyr"
+		elif i == 312
+			string FileExt = ".ts8"
+		elif i == 313
+			string FileExt = ".lyr"
+		elif i == 314
+			string FileExt = ".ts8"
+		elif i == 315
+			string FileExt = ".lyr"
+		elif i == 316
+			string FileExt = ".scn"
+		elif i == 317
+			string FileExt = ".scn"
+		elif i == 318
+			string FileExt = ".scn"
+		elif i == 319
+			string FileExt = ".scn"
+		elif i == 320
+			string FileExt = ".scn"
+		elif i == 321
+			string FileExt = ".scn"
+		elif i == 322
+			string FileExt = ".ts8"
+		elif i == 323
+			string FileExt = ".lyr"
+		elif i == 324
+			string FileExt = ".scn"
+		elif i == 325
+			string FileExt = ".scn"
+		elif i == 326
+			string FileExt = ".ts4"
+		elif i == 327
+			string FileExt = ".lyr"
+		elif i == 328
+			string FileExt = ".ts4"
+		elif i == 329
+			string FileExt = ".lyr"
+		elif i == 330
+			string FileExt = ".lyr"
+		elif i == 331
+			string FileExt = ".scn"
+		elif i == 332
+			string FileExt = ".ts8"
+		elif i == 333
+			string FileExt = ".lyr"
+		elif i == 334
+			string FileExt = ".scn"
+		elif i == 335
+			string FileExt = ".ts8"
+		elif i == 336
+			string FileExt = ".lyr"
+		elif i == 337
+			string FileExt = ".ts8"
+		elif i == 338
+			string FileExt = ".lyr"
+		elif i == 339
+			string FileExt = ".ts8"
+		elif i == 340
+			string FileExt = ".lyr"
+		elif i == 341
+			string FileExt = ".ts8"
+		elif i == 342
+			string FileExt = ".lyr"
+		elif i == 343
+			string FileExt = ".ts8"
+		elif i == 344
+			string FileExt = ".lyr"
+		elif i == 345
+			string FileExt = ".ts8"
+		elif i == 346
+			string FileExt = ".lyr"
+		elif i == 347
+			string FileExt = ".scn"
+		elif i == 348
+			string FileExt = ".scn"
+		elif i == 349
+			string FileExt = ".scn"
+		elif i == 350
+			string FileExt = ".scn"
+		elif i == 351
+			string FileExt = ".scn"
+		elif i == 352
+			string FileExt = ".scn"
+		elif i == 353
+			string FileExt = ".ts8"
+		elif i == 354
+			string FileExt = ".lyr"
+		elif i == 355
+			string FileExt = ".pal"
+		elif i == 356
+			string FileExt = ".ts8"
+		elif i == 357
+			string FileExt = ".lyr"
+		elif i == 358
+			string FileExt = ".scn"
+		elif i == 359
+			string FileExt = ".ts8"
+		elif i == 360
+			string FileExt = ".lyr"
+		elif i == 361
+			string FileExt = ".scn"
+		elif i == 364
+			string FileExt = ".scn"
+		elif i == 374
+			string FileExt = ".ts8"
+		elif i == 375
+			string FileExt = ".lyr"
+		else
+			string FileExt = ".anm"
+		endif
+
+		get NextOffset long
+		math NextOffset + FileTableStart
+		math FileSize = NextOffset
+		math FileSize - FileStart
+		if i == 382
+			math FileSize = 0xB0A
+		endif
+		string FilePath = "GodzillaDomination_Main/"
+		string FilePath + FileNum
+		string FilePath + "_"
+		string FilePath + FileStart
+		string FilePath + FileExt
+		log FilePath FileStart FileSize
+
+		# Let's split the tiles into separate files for ease-of-use.
+		if FileExt == ".anm"
+			savepos FileTableReturn
+			goto FileStart 0 SEEK_SET
+			get FrameFlags short
+			get FrameMaxPieces short
+			get FrameMaxBytes short
+			get FrameTotal short
+			get TileStart long
+			get TileSize long
+			math TileStart + FileStart
+			string FilePath = "GodzillaDomination_Main/"
+			string FilePath + FileNum
+			string FilePath + "_"
+			string FilePath + FileStart
+			string FilePath + "_tiles.bin"
+			if TileSize != 0
+				log FilePath TileStart TileSize
+			endif
+			goto FileTableReturn 0 SEEK_SET
+		elif FileExt == ".ts4" or FileExt == ".ts8"
+			savepos FileTableReturn
+			goto FileStart 0 SEEK_SET
+			get TilesetFlags short
+			get MetatileCount short
+			math MetatileCount * 8
+			get TileSize short
+			savepos TileStart
+			math TileStart + MetatileCount
+			if FileExt == ".ts4"
+				math TileSize * 0x20
+			elif FileExt == ".ts8"
+				math TileSize * 0x40
+			endif
+			string FilePath = "GodzillaDomination_Main/"
+			string FilePath + FileNum
+			string FilePath + "_"
+			string FilePath + FileStart
+			string FilePath + "_tiles.bin"
+			if TileSize != 0
+				log FilePath TileStart TileSize
+			endif
+			goto FileTableReturn 0 SEEK_SET
+		endif
+		math FileStart = NextOffset
+	next i
+elif HeaderCheck == "GODZILLA KDA"
+	# There are two separate filetables for the game. First one's for VS Mode (Single Pak), second is for the main game.
+
+	math FileTableStart = 0x64054
+	goto FileTableStart 0 SEEK_SET
+	get FileCount long
+	math FileCount = 33 # Japanese version has three less files here.
+	get FileStart long
+	math FileStart + FileTableStart
+
+	# File extensions are hardcoded as there seems to be no way to differentiate them otherwise.
+	for i = 0 < FileCount
+		set FileNum = i
+		math FileNum + 1
+		if i == 0
+			string FileExt = ".bin" # Screen fades?
+		elif i == 1
+			string FileExt = ".typ" # A 0-byte file, but this would presumably be a collision chart file, "TYPES.TYP".
+		elif i == 2
+			string FileExt = ".pal"
+		elif i == 3
+			string FileExt = ".ts4"
+		elif i == 4
+			string FileExt = ".lyr"
+		elif i == 5
+			string FileExt = ".scn"
+		elif i == 6
+			string FileExt = ".ts4"
+		elif i == 7
+			string FileExt = ".lyr"
+		elif i == 29
+			string FileExt = ".ts4"
+		elif i == 30
+			string FileExt = ".lyr"
+		elif i == 31
+			string FileExt = ".lyr"
+		elif i == 32
+			string FileExt = ".scn"
+		else
+			string FileExt = ".anm"
+		endif
+
+		get NextOffset long
+		math NextOffset + FileTableStart
+		math FileSize = NextOffset
+		math FileSize - FileStart
+		if i == 32
+			math FileSize = 0x430
+		endif
+		string FilePath = "GodzillaDominationJP_SinglePak/"
+		string FilePath + FileNum
+		string FilePath + "_"
+		string FilePath + FileStart
+		string FilePath + FileExt
+		log FilePath FileStart FileSize
+
+		# Let's split the tiles into separate files for ease-of-use.
+		if FileExt == ".anm"
+			savepos FileTableReturn
+			goto FileStart 0 SEEK_SET
+			get FrameFlags short
+			get FrameMaxPieces short
+			get FrameMaxBytes short
+			get FrameTotal short
+			get TileStart long
+			get TileSize long
+			math TileStart + FileStart
+			string FilePath = "GodzillaDominationJP_SinglePak/"
+			string FilePath + FileNum
+			string FilePath + "_"
+			string FilePath + FileStart
+			string FilePath + "_tiles.bin"
+			if TileSize != 0
+				log FilePath TileStart TileSize
+			endif
+			goto FileTableReturn 0 SEEK_SET
+		elif FileExt == ".ts4" or FileExt == ".ts8"
+			savepos FileTableReturn
+			goto FileStart 0 SEEK_SET
+			get TilesetFlags short
+			get MetatileCount short
+			math MetatileCount * 8
+			get TileSize short
+			savepos TileStart
+			math TileStart + MetatileCount
+			if FileExt == ".ts4"
+				math TileSize * 0x20
+			elif FileExt == ".ts8"
+				math TileSize * 0x40
+			endif
+			string FilePath = "GodzillaDominationJP_SinglePak/"
+			string FilePath + FileNum
+			string FilePath + "_"
+			string FilePath + FileStart
+			string FilePath + "_tiles.bin"
+			if TileSize != 0
+				log FilePath TileStart TileSize
+			endif
+			goto FileTableReturn 0 SEEK_SET
+		endif
+		math FileStart = NextOffset
+	next i
+
+	# Second table's used for the main game itself.
+
+	math FileTableStart = 0x111A18
+	goto FileTableStart 0 SEEK_SET
+	get FileCount long
+	math FileCount = 391 # Japanese version has eight more files here
+	get FileStart long
+	math FileStart + FileTableStart
+
+	# File extensions are hardcoded as there seems to be no way to differentiate them otherwise.
+	for i = 0 < FileCount
+		set FileNum = i
+		math FileNum + 1
+		if i == 0
+			string FileExt = ".bin" # Screen fades?
+		elif i == 1
+			string FileExt = ".typ" # A 0-byte file, but this would presumably be a collision chart file, "TYPES.TYP".
+		elif i == 2
+			string FileExt = ".scn"
+		elif i == 3
+			string FileExt = ".ts8"
+		elif i == 4
+			string FileExt = ".lyr"
+		elif i == 5
+			string FileExt = ".scn"
+		elif i == 6
+			string FileExt = ".ts8"
+		elif i == 7
+			string FileExt = ".lyr"
+		elif i == 8
+			string FileExt = ".scn"
+		elif i == 9
+			string FileExt = ".ts4"
+		elif i == 10
+			string FileExt = ".lyr"
+		elif i == 11
+			string FileExt = ".pal"
+		elif i == 12
+			string FileExt = ".ts4"
+		elif i == 13
+			string FileExt = ".lyr"
+		elif i == 14
+			string FileExt = ".scn"
+		elif i == 15
+			string FileExt = ".ts8"
+		elif i == 16
+			string FileExt = ".lyr"
+		elif i == 17
+			string FileExt = ".scn"
+		elif i == 18
+			string FileExt = ".ts4"
+		elif i == 19
+			string FileExt = ".lyr"
+		elif i == 20
+			string FileExt = ".lyr"
+		elif i == 21
+			string FileExt = ".ts4"
+		elif i == 22
+			string FileExt = ".lyr"
+		elif i == 23
+			string FileExt = ".scn"
+		elif i == 24
+			string FileExt = ".ts4"
+		elif i == 25
+			string FileExt = ".lyr"
+		elif i == 26
+			string FileExt = ".ts4"
+		elif i == 27
+			string FileExt = ".lyr"
+		elif i == 28
+			string FileExt = ".lyr"
+		elif i == 29
+			string FileExt = ".ts4"
+		elif i == 30
+			string FileExt = ".lyr"
+		elif i == 243
+			string FileExt = ".scn"
+		elif i == 244
+			string FileExt = ".ts4"
+		elif i == 245
+			string FileExt = ".lyr"
+		elif i == 246
+			string FileExt = ".lyr"
+		elif i == 247
+			string FileExt = ".ts4"
+		elif i == 248
+			string FileExt = ".lyr"
+		elif i == 249
+			string FileExt = ".lyr"
+		elif i == 250
+			string FileExt = ".ts4"
+		elif i == 251
+			string FileExt = ".lyr"
+		elif i == 252
+			string FileExt = ".scn"
+		elif i == 253
+			string FileExt = ".ts4"
+		elif i == 254
+			string FileExt = ".lyr"
+		elif i == 255
+			string FileExt = ".lyr"
+		elif i == 256
+			string FileExt = ".lyr"
+		elif i == 257
+			string FileExt = ".pal"
+		elif i == 258
+			string FileExt = ".pal"
+		elif i == 259
+			string FileExt = ".pal"
+		elif i == 260
+			string FileExt = ".pal"
+		elif i == 261
+			string FileExt = ".scn"
+		elif i == 262
+			string FileExt = ".ts4"
+		elif i == 263
+			string FileExt = ".lyr"
+		elif i == 264
+			string FileExt = ".lyr"
+		elif i == 265
+			string FileExt = ".lyr"
+		elif i == 266
+			string FileExt = ".lyr"
+		elif i == 267
+			string FileExt = ".ts4"
+		elif i == 268
+			string FileExt = ".lyr"
+		elif i == 269
+			string FileExt = ".scn"
+		elif i == 270
+			string FileExt = ".ts4"
+		elif i == 271
+			string FileExt = ".lyr"
+		elif i == 272
+			string FileExt = ".lyr"
+		elif i == 273
+			string FileExt = ".ts4"
+		elif i == 274
+			string FileExt = ".lyr"
+		elif i == 275
+			string FileExt = ".lyr"
+		elif i == 276
+			string FileExt = ".lyr"
+		elif i == 277
+			string FileExt = ".ts4"
+		elif i == 278
+			string FileExt = ".lyr"
+		elif i == 279
+			string FileExt = ".lyr"
+		elif i == 280
+			string FileExt = ".scn"
+		elif i == 281
+			string FileExt = ".ts8"
+		elif i == 282
+			string FileExt = ".lyr"
+		elif i == 283
+			string FileExt = ".lyr"
+		elif i == 284
+			string FileExt = ".scn"
+		elif i == 285
+			string FileExt = ".scn"
+		elif i == 286
+			string FileExt = ".ts8"
+		elif i == 287
+			string FileExt = ".lyr"
+		elif i == 288
+			string FileExt = ".scn"
+		elif i == 289
+			string FileExt = ".scn"
+		elif i == 290
+			string FileExt = ".ts4"
+		elif i == 291
+			string FileExt = ".lyr"
+		elif i == 292
+			string FileExt = ".lyr"
+		elif i == 293
+			string FileExt = ".lyr"
+		elif i == 294
+			string FileExt = ".lyr"
+		elif i == 295
+			string FileExt = ".ts4"
+		elif i == 296
+			string FileExt = ".lyr"
+		elif i == 297
+			string FileExt = ".lyr"
+		elif i == 298
+			string FileExt = ".lyr"
+		elif i == 299
+			string FileExt = ".scn"
+		elif i == 300
+			string FileExt = ".ts4"
+		elif i == 301
+			string FileExt = ".lyr"
+		elif i == 302
+			string FileExt = ".scn"
+		elif i == 303
+			string FileExt = ".ts4"
+		elif i == 304
+			string FileExt = ".lyr"
+		elif i == 305
+			string FileExt = ".lyr"
+		elif i == 306
+			string FileExt = ".lyr"
+		elif i == 307
+			string FileExt = ".lyr"
+		elif i == 308
+			string FileExt = ".ts4"
+		elif i == 309
+			string FileExt = ".lyr"
+		elif i == 310
+			string FileExt = ".lyr"
+		elif i == 311
+			string FileExt = ".scn"
+		elif i == 312
+			string FileExt = ".scn"
+		elif i == 313
+			string FileExt = ".ts8"
+		elif i == 314
+			string FileExt = ".lyr"
+		elif i == 315
+			string FileExt = ".ts8"
+		elif i == 316
+			string FileExt = ".lyr"
+		elif i == 317
+			string FileExt = ".ts8"
+		elif i == 318
+			string FileExt = ".lyr"
+		elif i == 319
+			string FileExt = ".ts8"
+		elif i == 320
+			string FileExt = ".lyr"
+		elif i == 321
+			string FileExt = ".ts8"
+		elif i == 322
+			string FileExt = ".lyr"
+		elif i == 323
+			string FileExt = ".ts8"
+		elif i == 324
+			string FileExt = ".lyr"
+		elif i == 325
+			string FileExt = ".scn"
+		elif i == 326
+			string FileExt = ".scn"
+		elif i == 327
+			string FileExt = ".scn"
+		elif i == 328
+			string FileExt = ".scn"
+		elif i == 329
+			string FileExt = ".scn"
+		elif i == 330
+			string FileExt = ".scn"
+		elif i == 331
+			string FileExt = ".ts8"
+		elif i == 332
+			string FileExt = ".lyr"
+		elif i == 333
+			string FileExt = ".scn"
+		elif i == 334
+			string FileExt = ".scn"
+		elif i == 335
+			string FileExt = ".ts4"
+		elif i == 336
+			string FileExt = ".lyr"
+		elif i == 337
+			string FileExt = ".scn"
+		elif i == 338
+			string FileExt = ".ts4"
+		elif i == 339
+			string FileExt = ".lyr"
+		elif i == 340
+			string FileExt = ".lyr"
+		elif i == 341
+			string FileExt = ".ts8"
+		elif i == 342
+			string FileExt = ".lyr"
+		elif i == 343
+			string FileExt = ".scn"
+		elif i == 344
+			string FileExt = ".ts8"
+		elif i == 345
+			string FileExt = ".lyr"
+		elif i == 346
+			string FileExt = ".ts8"
+		elif i == 347
+			string FileExt = ".lyr"
+		elif i == 348
+			string FileExt = ".ts8"
+		elif i == 349
+			string FileExt = ".lyr"
+		elif i == 350
+			string FileExt = ".ts8"
+		elif i == 351
+			string FileExt = ".lyr"
+		elif i == 352
+			string FileExt = ".ts8"
+		elif i == 353
+			string FileExt = ".lyr"
+		elif i == 354
+			string FileExt = ".ts8"
+		elif i == 355
+			string FileExt = ".lyr"
+		elif i == 356
+			string FileExt = ".scn"
+		elif i == 357
+			string FileExt = ".scn"
+		elif i == 358
+			string FileExt = ".scn"
+		elif i == 359
+			string FileExt = ".scn"
+		elif i == 360
+			string FileExt = ".scn"
+		elif i == 361
+			string FileExt = ".scn"
+		elif i == 362
+			string FileExt = ".ts8"
+		elif i == 363
+			string FileExt = ".lyr"
+		elif i == 364
+			string FileExt = ".pal"
+		elif i == 365
+			string FileExt = ".ts8"
+		elif i == 366
+			string FileExt = ".lyr"
+		elif i == 367
+			string FileExt = ".scn"
+		elif i == 368
+			string FileExt = ".ts8"
+		elif i == 369
+			string FileExt = ".lyr"
+		elif i == 370
+			string FileExt = ".scn"
+		elif i == 385
+			string FileExt = ".ts8"
+		elif i == 386
+			string FileExt = ".lyr"
+		elif i == 387
+			string FileExt = ".scn"
+		else
+			string FileExt = ".anm"
+		endif
+
+		get NextOffset long
+		math NextOffset + FileTableStart
+		math FileSize = NextOffset
+		math FileSize - FileStart
+		if i == 390
+			math FileSize = 0xB0A
+		endif
+		string FilePath = "GodzillaDominationJP_Main/"
+		string FilePath + FileNum
+		string FilePath + "_"
+		string FilePath + FileStart
+		string FilePath + FileExt
+		log FilePath FileStart FileSize
+
+		# Let's split the tiles into separate files for ease-of-use.
+		if FileExt == ".anm"
+			savepos FileTableReturn
+			goto FileStart 0 SEEK_SET
+			get FrameFlags short
+			get FrameMaxPieces short
+			get FrameMaxBytes short
+			get FrameTotal short
+			get TileStart long
+			get TileSize long
+			math TileStart + FileStart
+			string FilePath = "GodzillaDominationJP_Main/"
+			string FilePath + FileNum
+			string FilePath + "_"
+			string FilePath + FileStart
+			string FilePath + "_tiles.bin"
+			if TileSize != 0
+				log FilePath TileStart TileSize
+			endif
+			goto FileTableReturn 0 SEEK_SET
+		elif FileExt == ".ts4" or FileExt == ".ts8"
+			savepos FileTableReturn
+			goto FileStart 0 SEEK_SET
+			get TilesetFlags short
+			get MetatileCount short
+			math MetatileCount * 8
+			get TileSize short
+			savepos TileStart
+			math TileStart + MetatileCount
+			if FileExt == ".ts4"
+				math TileSize * 0x20
+			elif FileExt == ".ts8"
+				math TileSize * 0x40
+			endif
+			string FilePath = "GodzillaDominationJP_Main/"
+			string FilePath + FileNum
+			string FilePath + "_"
+			string FilePath + FileStart
+			string FilePath + "_tiles.bin"
+			if TileSize != 0
+				log FilePath TileStart TileSize
+			endif
+			goto FileTableReturn 0 SEEK_SET
+		endif
+		math FileStart = NextOffset
+	next i
+endif
