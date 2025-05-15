@@ -22,7 +22,7 @@ if HeaderCheck == "SPONGEBOBCKK"
 		if i == 0
 			string FileExt = ".scn"
 		elif i == 1
-			string FileExt = ".typ"
+			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
 		elif i == 2
 			string FileExt = ".ts4"
 		elif i == 3

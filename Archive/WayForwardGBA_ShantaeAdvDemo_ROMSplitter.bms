@@ -263,7 +263,7 @@ for i = 0 < FileCount
 	elif i == 214
 		string FileExt = ".pal"
 	elif i == 215
-		string FileExt = ".ts8"
+		string FileExt = ".ts4"
 	elif i == 216
 		string FileExt = ".lyr"
 	elif i == 219

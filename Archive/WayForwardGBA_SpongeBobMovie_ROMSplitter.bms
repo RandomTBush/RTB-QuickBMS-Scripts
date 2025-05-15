@@ -443,7 +443,7 @@ if HeaderCheck == "SBSPMOVIE"
 		elif i == 347
 			string FileExt = ".scn"
 		elif i == 348
-			string FileExt = ".typ"
+			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
 		elif i == 350
 			string FileExt = ".ts4"
 		elif i == 351
@@ -1075,7 +1075,7 @@ else
 		elif i == 7
 			string FileExt = ".lyr"
 		elif i == 8
-			string FileExt = ".typ"
+			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
 		elif i == 9
 			string FileExt = ".ts4"
 		elif i == 10
