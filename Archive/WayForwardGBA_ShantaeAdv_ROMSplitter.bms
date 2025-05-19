@@ -489,7 +489,7 @@ for i = 0 < FileCount
 	elif i == 499
 		string FileExt = ".pal"
 	elif i == 500
-		string FileExt = ".ts4"
+		string FileExt = ".ts8"
 	elif i == 501
 		string FileExt = ".lyr"
 	elif i == 511
