@@ -40,8 +40,6 @@ if HeaderCheck == "SIGMA STAR"
 			string FileExt = ".lyr"
 		elif i == 10
 			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
-		elif i == 37
-			string FileExt = ".bin" # No idea what this is supposed to be.
 		elif i == 118
 			string FileExt = ".scn"
 		elif i == 119
@@ -433,7 +431,7 @@ if HeaderCheck == "SIGMA STAR"
 		if i == 332
 			math FileSize = 0x430
 		endif
-		string FilePath = "SigmaStarSaga_Main/"
+		string FilePath = "SigmaStarSaga_RPG/"
 		string FilePath + FileNum
 		string FilePath + "_"
 		string FilePath + FileStart
@@ -474,7 +472,7 @@ if HeaderCheck == "SIGMA STAR"
 			log FilePath 0 TileDecSize MEMORY_FILE
 
 	# Let's split the .TS4/.TS8 tiles into separate files for ease-of-use.
-			string FilePath = "SigmaStarSaga_Main/"
+			string FilePath = "SigmaStarSaga_RPG/"
 			string FilePath + FileNum
 			string FilePath + "_"
 			string FilePath + FileStart
@@ -517,6 +515,9 @@ if HeaderCheck == "SIGMA STAR"
 			
 			math ScreenHeaderLen = ScreenStart
 			math ScreenHeaderLen - FileStart
+			if AlignCheck != 0
+				math ScreenHeaderLen - 2
+			endif
 			math CompSize = FileSize
 			math CompSize + ScreenStart
 			math CompSize - FileStart
@@ -550,7 +551,7 @@ if HeaderCheck == "SIGMA STAR"
 			get TileStart long
 			get TileSize long
 			math TileStart + FileStart
-			string FilePath = "SigmaStarSaga_Main/"
+			string FilePath = "SigmaStarSaga_RPG/"
 			string FilePath + FileNum
 			string FilePath + "_"
 			string FilePath + FileStart
@@ -861,7 +862,7 @@ if HeaderCheck == "SIGMA STAR"
 		if i == 376
 			math FileSize = 0x168
 		endif
-		string FilePath = "SigmaStarSaga_SHMUP/"
+		string FilePath = "SigmaStarSaga_Shooter/"
 		string FilePath + FileNum
 		string FilePath + "_"
 		string FilePath + FileStart
@@ -902,7 +903,7 @@ if HeaderCheck == "SIGMA STAR"
 			log FilePath 0 TileDecSize MEMORY_FILE
 
 	# Let's split the .TS4/.TS8 tiles into separate files for ease-of-use.
-			string FilePath = "SigmaStarSaga_SHMUP/"
+			string FilePath = "SigmaStarSaga_Shooter/"
 			string FilePath + FileNum
 			string FilePath + "_"
 			string FilePath + FileStart
@@ -945,6 +946,9 @@ if HeaderCheck == "SIGMA STAR"
 			
 			math ScreenHeaderLen = ScreenStart
 			math ScreenHeaderLen - FileStart
+			if AlignCheck != 0
+				math ScreenHeaderLen - 2
+			endif
 			math CompSize = FileSize
 			math CompSize + ScreenStart
 			math CompSize - FileStart
@@ -978,7 +982,7 @@ if HeaderCheck == "SIGMA STAR"
 			get TileStart long
 			get TileSize long
 			math TileStart + FileStart
-			string FilePath = "SigmaStarSaga_SHMUP/"
+			string FilePath = "SigmaStarSaga_Shooter/"
 			string FilePath + FileNum
 			string FilePath + "_"
 			string FilePath + FileStart

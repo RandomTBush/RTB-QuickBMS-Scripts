@@ -998,7 +998,6 @@ if HeaderCheck == "SBSPMOVIE"
 		math NextOffset + FileTableStart
 		math FileSize = NextOffset
 		math FileSize - FileStart
-		print "File %i%: %FileStart% | %FileSize%"
 		string FilePath = "SpongeBobMovie/"
 		string FilePath + FileNum
 		string FilePath + "_"

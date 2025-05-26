@@ -1071,6 +1071,9 @@ if HeaderCheck == "SPONGEBOBCKK"
 			
 			math ScreenHeaderLen = ScreenStart
 			math ScreenHeaderLen - FileStart
+			if AlignCheck != 0
+				math ScreenHeaderLen - 2
+			endif
 			math CompSize = FileSize
 			math CompSize + ScreenStart
 			math CompSize - FileStart
