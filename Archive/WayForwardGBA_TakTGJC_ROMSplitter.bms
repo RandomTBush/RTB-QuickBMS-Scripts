@@ -851,8 +851,8 @@ if HeaderCheck == "TAK GJC"
 		endif
 		string FilePath = "TakTGJC/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + FileExt
 		log FilePath FileStart FileSize
 
@@ -869,8 +869,8 @@ if HeaderCheck == "TAK GJC"
 			math TileStart + FileStart
 			string FilePath = "TakTGJC/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize
@@ -893,8 +893,8 @@ if HeaderCheck == "TAK GJC"
 			endif
 			string FilePath = "TakTGJC/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize

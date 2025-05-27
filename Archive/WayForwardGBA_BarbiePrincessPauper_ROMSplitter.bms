@@ -262,8 +262,8 @@ if HeaderCheck == "BARBIE P&P"
 		math FileSize - FileStart
 		string FilePath = "BarbiePandP/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + FileExt
 		log FilePath FileStart FileSize
 
@@ -280,8 +280,8 @@ if HeaderCheck == "BARBIE P&P"
 			math TileStart + FileStart
 			string FilePath = "BarbiePandP/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize
@@ -303,8 +303,8 @@ if HeaderCheck == "BARBIE P&P"
 			endif
 			string FilePath = "BarbiePandP/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize

@@ -59,8 +59,8 @@ if HeaderCheck == "GODZILLADOMI"
 		endif
 		string FilePath = "GodzillaDomination_SinglePak/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + FileExt
 		# Gonna hijack the procedure here...
 		if i == 3
@@ -88,8 +88,8 @@ if HeaderCheck == "GODZILLADOMI"
 			math TileStart + FileStart
 			string FilePath = "GodzillaDomination_SinglePak/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize
@@ -120,8 +120,8 @@ if HeaderCheck == "GODZILLADOMI"
 				log FilePath 0 FileSize MEMORY_FILE
 				string FilePath = "GodzillaDomination_SinglePak/"
 				string FilePath + FileNum
-				string FilePath + "_"
-				string FilePath + FileStart
+				# string FilePath + "_"
+				# string FilePath + FileStart
 				string FilePath + "_tiles.bin"
 				log FilePath 0x21E 0x10A0 MEMORY_FILE
 			else
@@ -139,8 +139,8 @@ if HeaderCheck == "GODZILLADOMI"
 				math TileSize * 0x20
 				string FilePath = "GodzillaDomination_SinglePak/"
 				string FilePath + FileNum
-				string FilePath + "_"
-				string FilePath + FileStart
+				# string FilePath + "_"
+				# string FilePath + FileStart
 				string FilePath + "_tiles.bin"
 				if TileSize != 0
 					log FilePath TileStart TileSize
@@ -491,8 +491,8 @@ if HeaderCheck == "GODZILLADOMI"
 		endif
 		string FilePath = "GodzillaDomination_Main/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + FileExt
 		log FilePath FileStart FileSize
 
@@ -509,8 +509,8 @@ if HeaderCheck == "GODZILLADOMI"
 			math TileStart + FileStart
 			string FilePath = "GodzillaDomination_Main/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize
@@ -532,8 +532,8 @@ if HeaderCheck == "GODZILLADOMI"
 			endif
 			string FilePath = "GodzillaDomination_Main/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize
@@ -593,8 +593,8 @@ elif HeaderCheck == "GODZILLA KDA"
 		endif
 		string FilePath = "GodzillaDominationJP_SinglePak/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + FileExt
 		log FilePath FileStart FileSize
 
@@ -611,8 +611,8 @@ elif HeaderCheck == "GODZILLA KDA"
 			math TileStart + FileStart
 			string FilePath = "GodzillaDominationJP_SinglePak/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize
@@ -634,8 +634,8 @@ elif HeaderCheck == "GODZILLA KDA"
 			endif
 			string FilePath = "GodzillaDominationJP_SinglePak/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize
@@ -995,8 +995,8 @@ elif HeaderCheck == "GODZILLA KDA"
 		endif
 		string FilePath = "GodzillaDominationJP_Main/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + FileExt
 		log FilePath FileStart FileSize
 
@@ -1013,8 +1013,8 @@ elif HeaderCheck == "GODZILLA KDA"
 			math TileStart + FileStart
 			string FilePath = "GodzillaDominationJP_Main/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize
@@ -1036,8 +1036,8 @@ elif HeaderCheck == "GODZILLA KDA"
 			endif
 			string FilePath = "GodzillaDominationJP_Main/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize

@@ -369,8 +369,8 @@ if HeaderCheck == "SCORPIONKING"
 		endif
 		string FilePath = "ScorpionKing/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + FileExt
 		log FilePath FileStart FileSize
 
@@ -389,8 +389,8 @@ if HeaderCheck == "SCORPIONKING"
 			math TileStart + FileStart
 			string FilePath = "ScorpionKing/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize
@@ -412,8 +412,8 @@ if HeaderCheck == "SCORPIONKING"
 			endif
 			string FilePath = "ScorpionKing/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize

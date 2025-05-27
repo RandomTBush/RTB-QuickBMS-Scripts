@@ -419,8 +419,8 @@ if HeaderCheck == "BARBIEPEGASU"
 		endif
 		string FilePath = "BarbiePegasus/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + FileExt
 
 		if FileExt == ".ts4" or FileExt == ".ts8"
@@ -460,8 +460,8 @@ if HeaderCheck == "BARBIEPEGASU"
 	# Let's split the .TS4/.TS8 tiles into separate files for ease-of-use.
 			string FilePath = "BarbiePegasus/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			clog FilePath TileStart CompSize TileSize
 			goto FileTableReturn 0 SEEK_SET
@@ -539,8 +539,8 @@ if HeaderCheck == "BARBIEPEGASU"
 			math TileStart + FileStart
 			string FilePath = "BarbiePegasus/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize

@@ -541,8 +541,8 @@ if HeaderCheck == "BARBIE12PRCS"
 		endif
 		string FilePath = "Barbie12DP/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + FileExt
 
 		if FileExt == ".ts4" or FileExt == ".ts8"
@@ -582,8 +582,8 @@ if HeaderCheck == "BARBIE12PRCS"
 	# Let's split the .TS4/.TS8 tiles into separate files for ease-of-use.
 			string FilePath = "Barbie12DP/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			clog FilePath TileStart CompSize TileSize
 			goto FileTableReturn 0 SEEK_SET
@@ -661,8 +661,8 @@ if HeaderCheck == "BARBIE12PRCS"
 			math TileStart + FileStart
 			string FilePath = "Barbie12DP/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize

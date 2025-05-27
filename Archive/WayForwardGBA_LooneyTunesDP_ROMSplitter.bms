@@ -382,8 +382,8 @@ if HeaderCheck == "LOONEYTUNES2"
 		endif
 		string FilePath = "LooneyTunesDP/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + FileExt
 		log FilePath FileStart FileSize
 
@@ -400,8 +400,8 @@ if HeaderCheck == "LOONEYTUNES2"
 			math TileStart + FileStart
 			string FilePath = "LooneyTunesDP/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize
@@ -424,8 +424,8 @@ if HeaderCheck == "LOONEYTUNES2"
 			endif
 			string FilePath = "LooneyTunesDP/"
 			string FilePath + FileNum
-			string FilePath + "_"
-			string FilePath + FileStart
+			# string FilePath + "_"
+			# string FilePath + FileStart
 			string FilePath + "_tiles.bin"
 			if TileSize != 0
 				log FilePath TileStart TileSize

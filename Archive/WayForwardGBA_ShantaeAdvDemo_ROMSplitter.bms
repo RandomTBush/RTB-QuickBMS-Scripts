@@ -55,8 +55,8 @@ for i = 0 < FileCount
 	endif
 	string FilePath = "ShantaeGBADemo_Battle/"
 	string FilePath + FileNum
-	string FilePath + "_"
-	string FilePath + FileStart
+	# string FilePath + "_"
+	# string FilePath + FileStart
 	string FilePath + FileExt
 	log FilePath FileStart FileSize
 
@@ -73,8 +73,8 @@ for i = 0 < FileCount
 		math TileStart + FileStart
 		string FilePath = "ShantaeGBADemo_Battle/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + "_tiles.bin"
 		if TileSize != 0
 			log FilePath TileStart TileSize
@@ -96,8 +96,8 @@ for i = 0 < FileCount
 		endif
 		string FilePath = "ShantaeGBADemo_Battle/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + "_tiles.bin"
 		if TileSize != 0
 			log FilePath TileStart TileSize
@@ -282,8 +282,8 @@ for i = 0 < FileCount
 	math FileSize - FileStart
 	string FilePath = "ShantaeGBADemo_Main/"
 	string FilePath + FileNum
-	string FilePath + "_"
-	string FilePath + FileStart
+	# string FilePath + "_"
+	# string FilePath + FileStart
 	string FilePath + FileExt
 	log FilePath FileStart FileSize
 
@@ -300,8 +300,8 @@ for i = 0 < FileCount
 		math TileStart + FileStart
 		string FilePath = "ShantaeGBADemo_Main/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + "_tiles.bin"
 		if TileSize != 0
 			log FilePath TileStart TileSize
@@ -323,8 +323,8 @@ for i = 0 < FileCount
 		endif
 		string FilePath = "ShantaeGBADemo_Main/"
 		string FilePath + FileNum
-		string FilePath + "_"
-		string FilePath + FileStart
+		# string FilePath + "_"
+		# string FilePath + FileStart
 		string FilePath + "_tiles.bin"
 		if TileSize != 0
 			log FilePath TileStart TileSize
