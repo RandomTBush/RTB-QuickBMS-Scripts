@@ -5,9 +5,15 @@ endian little
 
 goto 0xA0 0 SEEK_SET
 getdstring HeaderCheck 0x0C
+getdstring RegionCheck 0x04
 
 if HeaderCheck == "X-MEN: THE O"
-	math FileTableStart = 0x1B5778
+	# The offsets may be different between the US (B3XE) and European (B3XP) versions, but the files themselves are identical.
+	if RegionCheck == "B3XE"
+		math FileTableStart = 0x1B5778
+	elif RegionCheck == "B3XP"
+		math FileTableStart = 0x1B5C20
+	endif
 	goto FileTableStart 0 SEEK_SET
 	get FileCount long
 	math FileCount - 1 # Last "file" doesn't appear to be a file at all.

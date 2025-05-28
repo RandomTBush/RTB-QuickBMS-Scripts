@@ -5,12 +5,22 @@ endian little
 
 goto 0xA0 0 SEEK_SET
 getdstring HeaderCheck 0x0C
+getdstring RegionCheck 0x04
 
 if HeaderCheck == "SCORPIONKING"
-	math FileTableStart = 0xA9894
+	if RegionCheck == "ASZE"
+		math FileTableStart = 0xA9894
+	elif RegionCheck == "ASZP"
+		# European version is mostly the same. File IDs 200 and 232 (231 in US) have differences, and 222 is unique, the ordering is even the exact same. All LYR files have one-byte differences due to shifted IDs.
+		math FileTableStart = 0xAA440
+	endif
 	goto FileTableStart 0 SEEK_SET
 	get FileCount long
-	math FileCount = 253
+	if RegionCheck == "ASZE"
+		math FileCount = 253
+	elif RegionCheck == "ASZP"
+		math FileCount = 254 # One extra file in the European version.
+	endif
 	get FileStart long
 	math FileStart + FileTableStart
 
@@ -292,69 +302,133 @@ if HeaderCheck == "SCORPIONKING"
 			string FileExt = ".scn"
 		elif i == 220
 			string FileExt = ".lyr"
-		elif i == 221
+		elif i == 221 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 222
+		elif i == 222 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 223
+		elif i == 223 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 224
+		elif i == 224 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 225
+		elif i == 225 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 226
+		elif i == 226 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 227
+		elif i == 227 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 228
+		elif i == 228 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 229
+		elif i == 229 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 230
+		elif i == 230 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 231
+		elif i == 231 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 232
+		elif i == 232 and RegionCheck == "ASZE"
 			string FileExt = ".ts8"
-		elif i == 233
+		elif i == 233 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 234
+		elif i == 234 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 235
+		elif i == 235 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 236
+		elif i == 236 and RegionCheck == "ASZE"
 			string FileExt = ".ts8"
-		elif i == 237
+		elif i == 237 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 238
+		elif i == 238 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 239
+		elif i == 239 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 240
+		elif i == 240 and RegionCheck == "ASZE"
 			string FileExt = ".ts8"
-		elif i == 241
+		elif i == 241 and RegionCheck == "ASZE"
 			string FileExt = ".ts8"
-		elif i == 242
+		elif i == 242 and RegionCheck == "ASZE"
 			string FileExt = ".ts8"
-		elif i == 243
+		elif i == 243 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 244
+		elif i == 244 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 245
+		elif i == 245 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 246
+		elif i == 246 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 247
+		elif i == 247 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 248
+		elif i == 248 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 249
+		elif i == 249 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 250
+		elif i == 250 and RegionCheck == "ASZE"
 			string FileExt = ".ts8"
-		elif i == 251
+		elif i == 251 and RegionCheck == "ASZE"
 			string FileExt = ".ts4"
-		elif i == 252
+		elif i == 252 and RegionCheck == "ASZE"
+			string FileExt = ".ts8"
+		elif i == 222 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 223 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 224 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 225 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 226 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 227 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 228 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 229 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 230 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 231 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 232 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 233 and RegionCheck == "ASZP"
+			string FileExt = ".ts8"
+		elif i == 234 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 235 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 236 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 237 and RegionCheck == "ASZP"
+			string FileExt = ".ts8"
+		elif i == 238 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 239 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 240 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 241 and RegionCheck == "ASZP"
+			string FileExt = ".ts8"
+		elif i == 242 and RegionCheck == "ASZP"
+			string FileExt = ".ts8"
+		elif i == 243 and RegionCheck == "ASZP"
+			string FileExt = ".ts8"
+		elif i == 244 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 245 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 246 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 247 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 248 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 249 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 250 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 251 and RegionCheck == "ASZP"
+			string FileExt = ".ts8"
+		elif i == 252 and RegionCheck == "ASZP"
+			string FileExt = ".ts4"
+		elif i == 253 and RegionCheck == "ASZP"
 			string FileExt = ".ts8"
 		else
 			string FileExt = ".anm"
@@ -364,10 +438,18 @@ if HeaderCheck == "SCORPIONKING"
 		math NextOffset + FileTableStart
 		math FileSize = NextOffset
 		math FileSize - FileStart
-		if i == 252
+		
+		if i == 252 and RegionCheck == "ASZE"
 			math FileSize = 0x83F6
 		endif
-		string FilePath = "ScorpionKing/"
+		if i == 253 and RegionCheck == "ASZP"
+			math FileSize = 0x83F6
+		endif
+		if RegionCheck == "ASZE"
+			string FilePath = "ScorpionKing/"
+		elif RegionCheck == "ASZP"
+			string FilePath = "ScorpionKing_EU/"
+		endif
 		string FilePath + FileNum
 		# string FilePath + "_"
 		# string FilePath + FileStart
@@ -387,7 +469,11 @@ if HeaderCheck == "SCORPIONKING"
 			get TileStart long
 			get TileSize long
 			math TileStart + FileStart
-			string FilePath = "ScorpionKing/"
+			if RegionCheck == "ASZE"
+				string FilePath = "ScorpionKing/"
+			elif RegionCheck == "ASZP"
+				string FilePath = "ScorpionKing_EU/"
+			endif
 			string FilePath + FileNum
 			# string FilePath + "_"
 			# string FilePath + FileStart
@@ -410,7 +496,11 @@ if HeaderCheck == "SCORPIONKING"
 			elif FileExt == ".ts8"
 				math TileSize * 0x40
 			endif
-			string FilePath = "ScorpionKing/"
+			if RegionCheck == "ASZE"
+				string FilePath = "ScorpionKing/"
+			elif RegionCheck == "ASZP"
+				string FilePath = "ScorpionKing_EU/"
+			endif
 			string FilePath + FileNum
 			# string FilePath + "_"
 			# string FilePath + FileStart

@@ -7,11 +7,17 @@ endian little
 
 goto 0xA0 0 SEEK_SET
 getdstring HeaderCheck 0x0C
+getdstring RegionCheck 0x04
 
-if HeaderCheck == "GODZILLADOMI"
+if HeaderCheck == "GODZILLADOMI" or HeaderCheck == "GODZILLA DOM"
+	# US and European versions are mostly the same
 	# There are two separate filetables for the game. First one's for VS Mode (Single Pak), second is for the main game.
 
-	math FileTableStart = 0x6376C
+	if RegionCheck == "AG4E"
+		math FileTableStart = 0x6376C
+	elif RegionCheck == "AG4P"
+		math FileTableStart = 0x636BC
+	endif
 	goto FileTableStart 0 SEEK_SET
 	get FileCount long
 	math FileCount = 36
@@ -29,7 +35,7 @@ if HeaderCheck == "GODZILLADOMI"
 		elif i == 2
 			string FileExt = ".pal"
 		elif i == 3
-			string FileExt = ".ts4" # Variant of file ID 23 in the main game, error message font tileset.
+			string FileExt = ".ts4" # Variant of file ID 23 in the main game, error message font tileset. In the US version, there's differences. In the European version, it's identical.
 		elif i == 4
 			string FileExt = ".lyr"
 		elif i == 5
@@ -57,7 +63,11 @@ if HeaderCheck == "GODZILLADOMI"
 		if i == 35
 			math FileSize = 0x430
 		endif
-		string FilePath = "GodzillaDomination_SinglePak/"
+		if RegionCheck == "AG4E"
+			string FilePath = "GodzillaDomination_SinglePak/"
+		elif RegionCheck == "AG4P"
+			string FilePath = "GodzillaDomination_SinglePak_EU/"
+		endif		
 		string FilePath + FileNum
 		# string FilePath + "_"
 		# string FilePath + FileStart
@@ -65,12 +75,23 @@ if HeaderCheck == "GODZILLADOMI"
 		# Gonna hijack the procedure here...
 		if i == 3
 			print "Compressed file, changing plans..."
+			if RegionCheck == "AG4P"
+				log FilePath 0x134D38 0x1340
+			endif
 		elif i == 6
 			print "Compressed file, changing plans..."
-			log FilePath 0x120F5C 0x10D0
+			if RegionCheck == "AG4E"
+				log FilePath 0x120F5C 0x10D0
+			elif RegionCheck == "AG4P"
+				log FilePath 0x120EF4 0x10D0
+			endif
 		elif i == 32
 			print "Compressed file, changing plans..."
-			log FilePath 0x32FF84 0x5258
+			if RegionCheck == "AG4E"
+				log FilePath 0x32FF84 0x5258
+			elif RegionCheck == "AG4P"
+				log FilePath 0x32F840 0x5258
+			endif
 		else
 			log FilePath FileStart FileSize
 		endif
@@ -86,7 +107,11 @@ if HeaderCheck == "GODZILLADOMI"
 			get TileStart long
 			get TileSize long
 			math TileStart + FileStart
-			string FilePath = "GodzillaDomination_SinglePak/"
+			if RegionCheck == "AG4E"
+				string FilePath = "GodzillaDomination_SinglePak/"
+			elif RegionCheck == "AG4P"
+				string FilePath = "GodzillaDomination_SinglePak_EU/"
+			endif
 			string FilePath + FileNum
 			# string FilePath + "_"
 			# string FilePath + FileStart
@@ -102,7 +127,7 @@ if HeaderCheck == "GODZILLADOMI"
 			# Unlike WayForward's other games, these compressed files don't use LZ77 like in their other releases, and after a few hours of attempts I wasn't able to figure out the algorithm.
 			# Seeing as how two of those files are exact copies of ones already in the base game when decompressed, and the third (first, technically) has exactly five tiles changed and two removed...
 			# It made more sense to just copy what was already there, and make changes where necessary. "Work smarter, not harder", as the saying goes.
-			if i == 3
+			if RegionCheck == "AG4E" and i == 3
 				log MEMORY_FILE 0 0
 				set MEMORY_FILE2 binary "\x55\xB5\x55\x55\x55\x8C\x55\x55\xD5\x58\x55\x55\xF5\x55\x55\x55\xD5\x55\x55\x55\x85\x5C\x55\x55\x55\xB8\x55\x55\x55\x85\x55\x55\x55\x5B\x55\x55\x55\xC8\x55\x55\x55\x85\x5D\x55\x55\x55\x5F\x55\x55\x55\x5D\x55\x55\xC5\x58\x55\x55\x8B\x55\x55\x55\x58\x55\x55\x55\xC5\x55\x55\x55\xF5\x5C\x55\xF5\xFF\xCF\x55\xF5\xFF\xFF\x5C\xF5\xFF\xDF\x5B\xB5\xFB\xBD\x55\x85\xC8\x5B\x55\x55\xB5\x55\x55\x55\x55\x55\x55\x55\xC5\x55\x55\x55\xD5\x55\x55\xF5\xFF\xFF\x55\x85\xD8\x88\x55\x55\xC5\x55\x55\x55\x85\x55\x55\x55\x55\x55\x55" # First four font tile changes.
 				set MEMORY_FILE3 binary "\xD0\x16\xD6\x00\x60\x00\x10\x00\x10\x00\x00\x00\x10\x00\x00\x00\x60\x00\x10\x00\xD0\x16\xD6\x00\x00\x1F\x0F\x00\x00\x10\x00\x00" # Fifth font tile change.
@@ -118,17 +143,31 @@ if HeaderCheck == "GODZILLADOMI"
 
 				get FileSize asize MEMORY_FILE
 				log FilePath 0 FileSize MEMORY_FILE
-				string FilePath = "GodzillaDomination_SinglePak/"
+				if RegionCheck == "AG4E"
+					string FilePath = "GodzillaDomination_SinglePak/"
+				elif RegionCheck == "AG4P"
+					string FilePath = "GodzillaDomination_SinglePak_EU/"
+				endif
 				string FilePath + FileNum
 				# string FilePath + "_"
 				# string FilePath + FileStart
 				string FilePath + "_tiles.bin"
 				log FilePath 0x21E 0x10A0 MEMORY_FILE
 			else
-				if i == 6
-					goto 0x120F5C 0 SEEK_SET
-				elif i == 32
-					goto 0x32FF84 0 SEEK_SET
+				if RegionCheck == "AG4E"
+					if i == 6
+						goto 0x120F5C 0 SEEK_SET
+					elif i == 32
+						goto 0x32FF84 0 SEEK_SET
+					endif
+				elif RegionCheck == "AG4P"
+					if i == 3
+						goto 0x134D38 0 SEEK_SET
+					elif i == 6
+						goto 0x120EF4 0 SEEK_SET
+					elif i == 32
+						goto 0x32F840 0 SEEK_SET
+					endif
 				endif
 				get TilesetFlags short
 				get MetatileCount short
@@ -137,7 +176,11 @@ if HeaderCheck == "GODZILLADOMI"
 				savepos TileStart
 				math TileStart + MetatileCount
 				math TileSize * 0x20
-				string FilePath = "GodzillaDomination_SinglePak/"
+				if RegionCheck == "AG4E"
+					string FilePath = "GodzillaDomination_SinglePak/"
+				elif RegionCheck == "AG4P"
+					string FilePath = "GodzillaDomination_SinglePak_EU/"
+				endif
 				string FilePath + FileNum
 				# string FilePath + "_"
 				# string FilePath + FileStart
@@ -153,10 +196,19 @@ if HeaderCheck == "GODZILLADOMI"
 
 	# Second table's used for the main game itself.
 
-	math FileTableStart = 0x111D38
+	if RegionCheck == "AG4E"
+		math FileTableStart = 0x111D38
+	elif RegionCheck == "AG4P"
+		math FileTableStart = 0x111CD4
+	endif
 	goto FileTableStart 0 SEEK_SET
 	get FileCount long
-	math FileCount = 383
+	
+	if RegionCheck == "AG4E"
+		math FileCount = 383
+	elif RegionCheck == "AG4P"
+		math FileCount = 382 # One less file than the US version.
+	endif
 	get FileStart long
 	math FileStart + FileTableStart
 
@@ -214,10 +266,10 @@ if HeaderCheck == "GODZILLADOMI"
 			string FileExt = ".lyr"
 		elif i == 24
 			string FileExt = ".lyr"
-		elif i == 25
-			string FileExt = ".ts4"
+		elif i == 25 and RegionCheck == "AG4E"
+			string FileExt = ".ts4" # Not a .TS4 in the European version. This is where it desyncs, but every file in between is a .ANM so nothing changes with the extraction process.
 		elif i == 234
-			string FileExt = ".scn"
+			string FileExt = ".scn" # And this is where the European version re-syncs with the US version.
 		elif i == 235
 			string FileExt = ".ts4"
 		elif i == 236
@@ -474,9 +526,13 @@ if HeaderCheck == "GODZILLADOMI"
 			string FileExt = ".scn"
 		elif i == 364
 			string FileExt = ".scn"
-		elif i == 374
+		elif i == 374 and RegionCheck == "AG4E"
 			string FileExt = ".ts8"
-		elif i == 375
+		elif i == 375 and RegionCheck == "AG4E"
+			string FileExt = ".lyr"
+		elif i == 380 and RegionCheck == "AG4P"
+			string FileExt = ".ts8" # This pair is a bit further in for the European version.
+		elif i == 381 and RegionCheck == "AG4P"
 			string FileExt = ".lyr"
 		else
 			string FileExt = ".anm"
@@ -486,10 +542,16 @@ if HeaderCheck == "GODZILLADOMI"
 		math NextOffset + FileTableStart
 		math FileSize = NextOffset
 		math FileSize - FileStart
-		if i == 382
+		if i == 382 and RegionCheck == "AG4E"
+			math FileSize = 0xB0A
+		elif i == 381 and RegionCheck == "AG4P"
 			math FileSize = 0xB0A
 		endif
-		string FilePath = "GodzillaDomination_Main/"
+		if RegionCheck == "AG4E"
+			string FilePath = "GodzillaDomination_Main/"
+		elif RegionCheck == "AG4P"
+			string FilePath = "GodzillaDomination_Main_EU/"
+		endif
 		string FilePath + FileNum
 		# string FilePath + "_"
 		# string FilePath + FileStart
@@ -507,7 +569,11 @@ if HeaderCheck == "GODZILLADOMI"
 			get TileStart long
 			get TileSize long
 			math TileStart + FileStart
-			string FilePath = "GodzillaDomination_Main/"
+			if RegionCheck == "AG4E"
+				string FilePath = "GodzillaDomination_Main/"
+			elif RegionCheck == "AG4P"
+				string FilePath = "GodzillaDomination_Main_EU/"
+			endif
 			string FilePath + FileNum
 			# string FilePath + "_"
 			# string FilePath + FileStart
@@ -530,7 +596,11 @@ if HeaderCheck == "GODZILLADOMI"
 			elif FileExt == ".ts8"
 				math TileSize * 0x40
 			endif
-			string FilePath = "GodzillaDomination_Main/"
+			if RegionCheck == "AG4E"
+				string FilePath = "GodzillaDomination_Main/"
+			elif RegionCheck == "AG4P"
+				string FilePath = "GodzillaDomination_Main_EU/"
+			endif
 			string FilePath + FileNum
 			# string FilePath + "_"
 			# string FilePath + FileStart
@@ -542,7 +612,8 @@ if HeaderCheck == "GODZILLADOMI"
 		endif
 		math FileStart = NextOffset
 	next i
-elif HeaderCheck == "GODZILLA KDA"
+elif HeaderCheck == "GODZILLA KDA" and RegionCheck == "AG4J"
+	# Japanese version.
 	# There are two separate filetables for the game. First one's for VS Mode (Single Pak), second is for the main game.
 
 	math FileTableStart = 0x64054
@@ -591,7 +662,7 @@ elif HeaderCheck == "GODZILLA KDA"
 		if i == 32
 			math FileSize = 0x430
 		endif
-		string FilePath = "GodzillaDominationJP_SinglePak/"
+		string FilePath = "GodzillaDomination_SinglePak_JP/"
 		string FilePath + FileNum
 		# string FilePath + "_"
 		# string FilePath + FileStart
@@ -609,7 +680,7 @@ elif HeaderCheck == "GODZILLA KDA"
 			get TileStart long
 			get TileSize long
 			math TileStart + FileStart
-			string FilePath = "GodzillaDominationJP_SinglePak/"
+			string FilePath = "GodzillaDomination_SinglePak_JP/"
 			string FilePath + FileNum
 			# string FilePath + "_"
 			# string FilePath + FileStart
@@ -632,7 +703,7 @@ elif HeaderCheck == "GODZILLA KDA"
 			elif FileExt == ".ts8"
 				math TileSize * 0x40
 			endif
-			string FilePath = "GodzillaDominationJP_SinglePak/"
+			string FilePath = "GodzillaDomination_SinglePak_JP/"
 			string FilePath + FileNum
 			# string FilePath + "_"
 			# string FilePath + FileStart
@@ -993,7 +1064,7 @@ elif HeaderCheck == "GODZILLA KDA"
 		if i == 390
 			math FileSize = 0xB0A
 		endif
-		string FilePath = "GodzillaDominationJP_Main/"
+		string FilePath = "GodzillaDomination_Main_JP/"
 		string FilePath + FileNum
 		# string FilePath + "_"
 		# string FilePath + FileStart
@@ -1011,7 +1082,7 @@ elif HeaderCheck == "GODZILLA KDA"
 			get TileStart long
 			get TileSize long
 			math TileStart + FileStart
-			string FilePath = "GodzillaDominationJP_Main/"
+			string FilePath = "GodzillaDomination_Main_JP/"
 			string FilePath + FileNum
 			# string FilePath + "_"
 			# string FilePath + FileStart
@@ -1034,7 +1105,7 @@ elif HeaderCheck == "GODZILLA KDA"
 			elif FileExt == ".ts8"
 				math TileSize * 0x40
 			endif
-			string FilePath = "GodzillaDominationJP_Main/"
+			string FilePath = "GodzillaDomination_Main_JP/"
 			string FilePath + FileNum
 			# string FilePath + "_"
 			# string FilePath + FileStart

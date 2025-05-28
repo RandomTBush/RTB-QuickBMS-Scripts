@@ -5,8 +5,10 @@ endian little
 
 goto 0xA0 0 SEEK_SET
 getdstring HeaderCheck 0x0C
+getdstring RegionCheck 0x04
 
-if HeaderCheck == "BARBIE P&P"
+if HeaderCheck == "BARBIE P&P" and RegionCheck == "BAUE"
+	# US version.
 	math FileTableStart = 0xC5858
 	goto FileTableStart 0 SEEK_SET
 	get FileCount long
@@ -302,6 +304,370 @@ if HeaderCheck == "BARBIE P&P"
 				math TileSize * 0x40
 			endif
 			string FilePath = "BarbiePandP/"
+			string FilePath + FileNum
+			# string FilePath + "_"
+			# string FilePath + FileStart
+			string FilePath + "_tiles.bin"
+			if TileSize != 0
+				log FilePath TileStart TileSize
+			endif
+			goto FileTableReturn 0 SEEK_SET
+		endif
+		math FileStart = NextOffset
+	next i
+elif HeaderCheck == "BARBIE AS TH" and RegionCheck == "BAUP"
+	# European version.
+	math FileTableStart = 0xE6A74
+	goto FileTableStart 0 SEEK_SET
+	get FileCount long
+	math FileCount = 294 # 50 more files than the US version.
+	get FileStart long
+	math FileStart + FileTableStart
+
+	# File extensions are hardcoded as there seems to be no way to differentiate them otherwise.
+	for i = 0 < FileCount
+		set FileNum = i
+		math FileNum + 1
+		if i == 0
+			string FileExt = ".ts8"
+		elif i == 1
+			string FileExt = ".lyr"
+		elif i == 2
+			string FileExt = ".scn"
+		elif i == 3
+			string FileExt = ".scn"
+		elif i == 4
+			string FileExt = ".ts8"
+		elif i == 5
+			string FileExt = ".lyr"
+		elif i == 6
+			string FileExt = ".scn"
+		elif i == 7
+			string FileExt = ".ts8"
+		elif i == 8
+			string FileExt = ".lyr"
+		elif i == 9
+			string FileExt = ".scn"
+		elif i == 10
+			string FileExt = ".ts4"
+		elif i == 11
+			string FileExt = ".lyr"
+		elif i == 12
+			string FileExt = ".scn"
+		elif i == 13
+			string FileExt = ".ts4"
+		elif i == 14
+			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
+		elif i == 15
+			string FileExt = ".ts4"
+		elif i == 16
+			string FileExt = ".lyr"
+		elif i == 17
+			string FileExt = ".pal"
+		elif i == 18
+			string FileExt = ".pal"
+		elif i == 19
+			string FileExt = ".pal"
+		elif i == 20
+			string FileExt = ".pal"
+		elif i == 21
+			string FileExt = ".ts4"
+		elif i == 22
+			string FileExt = ".lyr"
+		elif i == 23
+			string FileExt = ".ts8"
+		elif i == 24
+			string FileExt = ".lyr"
+		elif i == 25
+			string FileExt = ".ts8"
+		elif i == 26
+			string FileExt = ".lyr"
+		elif i == 27
+			string FileExt = ".ts8"
+		elif i == 28
+			string FileExt = ".lyr"
+		elif i == 29
+			string FileExt = ".ts8"
+		elif i == 30
+			string FileExt = ".lyr"
+		elif i == 31
+			string FileExt = ".scn"
+		elif i == 32
+			string FileExt = ".scn"
+		elif i == 33
+			string FileExt = ".scn"
+		elif i == 34
+			string FileExt = ".scn"
+		elif i == 35
+			string FileExt = ".scn"
+		elif i == 36
+			string FileExt = ".ts8"
+		elif i == 37
+			string FileExt = ".lyr"
+		elif i == 38
+			string FileExt = ".ts8"
+		elif i == 39
+			string FileExt = ".lyr"
+		elif i == 40
+			string FileExt = ".scn"
+		elif i == 41
+			string FileExt = ".ts4"
+		elif i == 42
+			string FileExt = ".lyr"
+		elif i == 43
+			string FileExt = ".ts4"
+		elif i == 44
+			string FileExt = ".lyr"
+		elif i == 45
+			string FileExt = ".ts4"
+		elif i == 46
+			string FileExt = ".lyr"
+		elif i == 47
+			string FileExt = ".ts4"
+		elif i == 48
+			string FileExt = ".lyr"
+		elif i == 49
+			string FileExt = ".ts4"
+		elif i == 50
+			string FileExt = ".lyr"
+		elif i == 51
+			string FileExt = ".ts8"
+		elif i == 52
+			string FileExt = ".lyr"
+		elif i == 53
+			string FileExt = ".pal"
+		elif i == 199
+			string FileExt = ".scn"
+		elif i == 200
+			string FileExt = ".ts4"
+		elif i == 201
+			string FileExt = ".lyr"
+		elif i == 202
+			string FileExt = ".scn"
+		elif i == 203
+			string FileExt = ".scn"
+		elif i == 204
+			string FileExt = ".scn"
+		elif i == 205
+			string FileExt = ".scn"
+		elif i == 206
+			string FileExt = ".ts4"
+		elif i == 207
+			string FileExt = ".lyr"
+		elif i == 208
+			string FileExt = ".lyr"
+		elif i == 209
+			string FileExt = ".lyr"
+		elif i == 210
+			string FileExt = ".lyr"
+		elif i == 211
+			string FileExt = ".lyr"
+		elif i == 212
+			string FileExt = ".lyr"
+		elif i == 213
+			string FileExt = ".lyr"
+		elif i == 214
+			string FileExt = ".lyr"
+		elif i == 215
+			string FileExt = ".lyr"
+		elif i == 216
+			string FileExt = ".lyr"
+		elif i == 217
+			string FileExt = ".scn"
+		elif i == 218
+			string FileExt = ".scn"
+		elif i == 219
+			string FileExt = ".scn"
+		elif i == 220
+			string FileExt = ".scn"
+		elif i == 221
+			string FileExt = ".ts4"
+		elif i == 222
+			string FileExt = ".lyr"
+		elif i == 223
+			string FileExt = ".lyr"
+		elif i == 224
+			string FileExt = ".lyr"
+		elif i == 225
+			string FileExt = ".lyr"
+		elif i == 226
+			string FileExt = ".lyr"
+		elif i == 227
+			string FileExt = ".lyr"
+		elif i == 228
+			string FileExt = ".lyr"
+		elif i == 229
+			string FileExt = ".lyr"
+		elif i == 230
+			string FileExt = ".ts4"
+		elif i == 231
+			string FileExt = ".lyr"
+		elif i == 232
+			string FileExt = ".scn"
+		elif i == 233
+			string FileExt = ".scn"
+		elif i == 234
+			string FileExt = ".scn"
+		elif i == 235
+			string FileExt = ".scn"
+		elif i == 236
+			string FileExt = ".ts4"
+		elif i == 237
+			string FileExt = ".lyr"
+		elif i == 238
+			string FileExt = ".scn"
+		elif i == 239
+			string FileExt = ".ts4"
+		elif i == 240
+			string FileExt = ".lyr"
+		elif i == 241
+			string FileExt = ".lyr"
+		elif i == 242
+			string FileExt = ".lyr"
+		elif i == 243
+			string FileExt = ".lyr"
+		elif i == 244
+			string FileExt = ".lyr"
+		elif i == 245
+			string FileExt = ".lyr"
+		elif i == 246
+			string FileExt = ".lyr"
+		elif i == 247
+			string FileExt = ".lyr"
+		elif i == 248
+			string FileExt = ".lyr"
+		elif i == 249
+			string FileExt = ".lyr"
+		elif i == 250
+			string FileExt = ".lyr"
+		elif i == 251
+			string FileExt = ".ts4"
+		elif i == 252
+			string FileExt = ".lyr"
+		elif i == 253
+			string FileExt = ".ts4"
+		elif i == 254
+			string FileExt = ".lyr"
+		elif i == 255
+			string FileExt = ".scn"
+		elif i == 256
+			string FileExt = ".ts4"
+		elif i == 257
+			string FileExt = ".lyr"
+		elif i == 258
+			string FileExt = ".scn"
+		elif i == 259
+			string FileExt = ".scn"
+		elif i == 260
+			string FileExt = ".scn"
+		elif i == 261
+			string FileExt = ".scn"
+		elif i == 262
+			string FileExt = ".scn"
+		elif i == 263
+			string FileExt = ".ts4"
+		elif i == 264
+			string FileExt = ".lyr"
+		elif i == 265
+			string FileExt = ".lyr"
+		elif i == 266
+			string FileExt = ".lyr"
+		elif i == 267
+			string FileExt = ".lyr"
+		elif i == 268
+			string FileExt = ".lyr"
+		elif i == 269
+			string FileExt = ".lyr"
+		elif i == 270
+			string FileExt = ".lyr"
+		elif i == 271
+			string FileExt = ".lyr"
+		elif i == 272
+			string FileExt = ".ts4"
+		elif i == 273
+			string FileExt = ".lyr"
+		elif i == 274
+			string FileExt = ".scn"
+		elif i == 275
+			string FileExt = ".scn"
+		elif i == 276
+			string FileExt = ".ts4"
+		elif i == 277
+			string FileExt = ".lyr"
+		elif i == 278
+			string FileExt = ".ts4"
+		elif i == 279
+			string FileExt = ".lyr"
+		elif i == 280
+			string FileExt = ".lyr"
+		elif i == 281
+			string FileExt = ".lyr"
+		elif i == 282
+			string FileExt = ".lyr"
+		elif i == 283
+			string FileExt = ".lyr"
+		elif i == 284
+			string FileExt = ".ts4"
+		elif i == 285
+			string FileExt = ".lyr"
+		elif i == 286
+			string FileExt = ".scn"
+		elif i == 291
+			string FileExt = ".scn"
+		elif i == 292
+			string FileExt = ".ts8"
+		elif i == 293
+			string FileExt = ".lyr"
+		else
+			string FileExt = ".anm"
+		endif
+
+		get NextOffset long
+		math NextOffset + FileTableStart
+		math FileSize = NextOffset
+		math FileSize - FileStart
+		string FilePath = "BarbiePandP_EU/"
+		string FilePath + FileNum
+		# string FilePath + "_"
+		# string FilePath + FileStart
+		string FilePath + FileExt
+		log FilePath FileStart FileSize
+
+	# Let's split the tiles into separate files for ease-of-use.
+		if FileExt == ".anm"
+			savepos FileTableReturn
+			goto FileStart 0 SEEK_SET
+			get FrameFlags short
+			get FrameMaxPieces short
+			get FrameMaxBytes short
+			get FrameTotal short
+			get TileStart long
+			get TileSize long
+			math TileStart + FileStart
+			string FilePath = "BarbiePandP_EU/"
+			string FilePath + FileNum
+			# string FilePath + "_"
+			# string FilePath + FileStart
+			string FilePath + "_tiles.bin"
+			if TileSize != 0
+				log FilePath TileStart TileSize
+			endif
+			goto FileTableReturn 0 SEEK_SET
+		elif FileExt == ".ts4" or FileExt == ".ts8"
+			savepos FileTableReturn
+			goto FileStart 0 SEEK_SET
+			get TilesetFlags short
+			get MetatileCount short
+			math MetatileCount * 8
+			get TileSize short
+			savepos TileStart
+			math TileStart + MetatileCount
+			if FileExt == ".ts4"
+				math TileSize * 0x20
+			elif FileExt == ".ts8"
+				math TileSize * 0x40
+			endif
+			string FilePath = "BarbiePandP_EU/"
 			string FilePath + FileNum
 			# string FilePath + "_"
 			# string FilePath + FileStart

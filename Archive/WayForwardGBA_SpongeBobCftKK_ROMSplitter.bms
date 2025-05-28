@@ -7,11 +7,18 @@ comtype COMP_LZ77WII
 
 goto 0xA0 0 SEEK_SET
 getdstring HeaderCheck 0x0C
+getdstring RegionCheck 0x04
 
 if HeaderCheck == "SPONGEBOBCKK"
-	math FileTableStart = 0x2869D4
+	# The offsets may be different between the US (BQ4E) and European (BQ4P) versions, but the files themselves are identical.
+	if RegionCheck == "BQ4E"
+		math FileTableStart = 0x2869D4
+	elif RegionCheck == "BQ4P"
+		math FileTableStart = 0x2869A4
+	endif
 	goto FileTableStart 0 SEEK_SET
 	get FileCount long
+	math FileCount - 1 # Last "file" doesn't appear to be a file at all.
 	get FileStart long
 	math FileStart + FileTableStart
 
@@ -971,8 +978,6 @@ if HeaderCheck == "SPONGEBOBCKK"
 			string FileExt = ".ts4"
 		elif i == 773
 			string FileExt = ".lyr"
-		elif i == 774
-			string FileExt = ".bin" # No idea what this is supposed to be.
 		else
 			string FileExt = ".anm"
 		endif
@@ -983,9 +988,6 @@ if HeaderCheck == "SPONGEBOBCKK"
 		math FileSize - FileStart
 		if i == 773
 			math FileSize = 0x1D4
-		elif i == 774
-			math FileStart = 0x7C8894 # Last "file" might not be an actual file, but let's extract it anyway.
-			math FileSize = 0x718
 		endif
 		string FilePath = "SpongeBobCftKK/"
 		string FilePath + FileNum

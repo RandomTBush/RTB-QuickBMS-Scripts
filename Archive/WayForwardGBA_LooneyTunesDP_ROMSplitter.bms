@@ -5,8 +5,10 @@ endian little
 
 goto 0xA0 0 SEEK_SET
 getdstring HeaderCheck 0x0C
+getdstring RegionCheck 0x04
 
 if HeaderCheck == "LOONEYTUNES2"
+	# Both the US (BLNE) and European (BLNP) releases have the exact same offset.	
 	math FileTableStart = 0x1B9914
 	goto FileTableStart 0 SEEK_SET
 	get FileCount long
