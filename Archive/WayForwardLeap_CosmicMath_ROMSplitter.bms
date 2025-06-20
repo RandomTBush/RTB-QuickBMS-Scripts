@@ -1,0 +1,147 @@
+# Cosmic Math ROM-splitting script written by Random Talking Bush.
+# All .ANM/.AN8 files have a simple byte pad compression.
+# Use this in tandem with my respective Python scripts to extract graphics data from the game.
+
+endian little
+
+goto 0x220 0 SEEK_SET
+get HeaderStart short
+goto HeaderStart 0 SEEK_SET
+get HeaderCheck string
+goto 0x208 0 SEEK_SET
+get VersionStart short
+goto VersionStart 0 SEEK_SET
+get VersionCheck string
+
+if HeaderCheck == "CosmicMath"
+	if VersionCheck == "v 1.0"
+		math FileTableStart = 0x82A80
+	elif VersionCheck == "v 1.1"
+		math FileTableStart = 0x80F50
+	endif
+	goto FileTableStart 0 SEEK_SET
+	get FileCount long
+	math FileCount - 1 # Last "file" doesn't appear to be a file at all.
+	get FileStart long
+	math FileStart + FileTableStart
+
+	# File extensions are hardcoded as there seems to be no way to differentiate them otherwise.
+	for i = 0 < FileCount
+		set FileNum = i
+		math FileNum + 1
+		if i == 0
+			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
+		elif i == 1
+			string FileExt = ".ts8"
+		elif i == 2
+			string FileExt = ".anm"
+		elif i == 3
+			string FileExt = ".anm"
+		elif i == 8
+			string FileExt = ".anm"
+		elif i == 9
+			string FileExt = ".anm"
+		elif i == 18
+			string FileExt = ".anm"
+		elif i == 19
+			string FileExt = ".anm"
+		elif i == 20
+			string FileExt = ".anm"
+		elif i == 29
+			string FileExt = ".ts8"
+		elif i == 30
+			string FileExt = ".lyr"
+		elif i == 31
+			string FileExt = ".scn"
+		elif i == 32
+			string FileExt = ".scn"
+		elif i == 33
+			string FileExt = ".ts8"
+		elif i == 34
+			string FileExt = ".lyr"
+		elif i == 35
+			string FileExt = ".ts8"
+		elif i == 36
+			string FileExt = ".lyr"
+		elif i == 37
+			string FileExt = ".scn"
+		elif i == 38
+			string FileExt = ".ts8"
+		elif i == 39
+			string FileExt = ".lyr"
+		elif i == 40
+			string FileExt = ".scn"
+		elif i == 41
+			string FileExt = ".ts8"
+		elif i == 42
+			string FileExt = ".lyr"
+		elif i == 43
+			string FileExt = ".scn"
+		elif i == 44
+			string FileExt = ".scn"
+		elif i == 45
+			string FileExt = ".ts8"
+		elif i == 46
+			string FileExt = ".lyr"
+		elif i == 47
+			string FileExt = ".ts8"
+		elif i == 48
+			string FileExt = ".lyr"
+		elif i == 49
+			string FileExt = ".scn"
+		elif i == 50
+			string FileExt = ".ts8"
+		elif i == 51
+			string FileExt = ".lyr"
+		elif i == 52
+			string FileExt = ".scn"
+		elif i == 53
+			string FileExt = ".ts8"
+		elif i == 54
+			string FileExt = ".lyr"
+		elif i == 55
+			string FileExt = ".scn"
+		elif i == 56
+			string FileExt = ".ts8"
+		elif i == 57
+			string FileExt = ".lyr"
+		elif i == 58
+			string FileExt = ".ts8"
+		elif i == 59
+			string FileExt = ".lyr"
+		elif i == 60
+			string FileExt = ".scn"
+		elif i == 61
+			string FileExt = ".scn"
+		elif i == 62
+			string FileExt = ".scn"
+		elif i == 63
+			string FileExt = ".scn"
+		elif i == 64
+			string FileExt = ".ts8"
+		elif i == 65
+			string FileExt = ".lyr"
+		elif i == 66
+			string FileExt = ".ts8"
+		elif i == 67
+			string FileExt = ".lyr"
+		elif i == 68
+			string FileExt = ".scn"
+		else
+			string FileExt = ".an8"
+		endif
+
+		get NextOffset long
+		math NextOffset + FileTableStart
+		math FileSize = NextOffset
+		math FileSize - FileStart
+		string FilePath = "CosmicMath/"
+		string FilePath + FileNum
+		# string FilePath + "_"
+		# string FilePath + FileStart
+		string FilePath + FileExt
+		log FilePath FileStart FileSize
+
+		math FileStart = NextOffset
+	next i
+endif

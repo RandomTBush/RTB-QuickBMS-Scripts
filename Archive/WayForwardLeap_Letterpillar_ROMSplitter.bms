@@ -1,0 +1,163 @@
+# Letterpillar ROM-splitting script written by Random Talking Bush.
+# All .ANM/.AN8 files have a simple byte pad compression.
+# Use this in tandem with my respective Python scripts to extract graphics data from the game.
+
+endian little
+
+goto 0x220 0 SEEK_SET
+get HeaderStart short
+goto HeaderStart 0 SEEK_SET
+get HeaderCheck string
+
+if HeaderCheck == "LetterPillar"
+	math FileTableStart = 0x94678
+	goto FileTableStart 0 SEEK_SET
+	get FileCount long
+	math FileCount - 1 # Last "file" doesn't appear to be a file at all.
+	get FileStart long
+	math FileStart + FileTableStart
+
+	# File extensions are hardcoded as there seems to be no way to differentiate them otherwise.
+	for i = 0 < FileCount
+		set FileNum = i
+		math FileNum + 1
+		if i == 0
+			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
+		elif i == 1
+			string FileExt = ".ts8"
+		elif i == 9
+			string FileExt = ".anm"
+		elif i == 10
+			string FileExt = ".anm"
+		elif i == 11
+			string FileExt = ".anm"
+		elif i == 12
+			string FileExt = ".anm"
+		elif i == 24
+			string FileExt = ".ts8"
+		elif i == 25
+			string FileExt = ".lyr"
+		elif i == 26
+			string FileExt = ".scn"
+		elif i == 27
+			string FileExt = ".ts8"
+		elif i == 28
+			string FileExt = ".lyr"
+		elif i == 29
+			string FileExt = ".scn"
+		elif i == 30
+			string FileExt = ".ts8"
+		elif i == 31
+			string FileExt = ".lyr"
+		elif i == 32
+			string FileExt = ".scn"
+		elif i == 33
+			string FileExt = ".ts8"
+		elif i == 34
+			string FileExt = ".lyr"
+		elif i == 35
+			string FileExt = ".scn"
+		elif i == 36
+			string FileExt = ".ts8"
+		elif i == 37
+			string FileExt = ".lyr"
+		elif i == 38
+			string FileExt = ".scn"
+		elif i == 39
+			string FileExt = ".scn"
+		elif i == 40
+			string FileExt = ".scn"
+		elif i == 41
+			string FileExt = ".scn"
+		elif i == 42
+			string FileExt = ".scn"
+		elif i == 43
+			string FileExt = ".scn"
+		elif i == 44
+			string FileExt = ".scn"
+		elif i == 45
+			string FileExt = ".scn"
+		elif i == 46
+			string FileExt = ".ts8"
+		elif i == 47
+			string FileExt = ".lyr"
+		elif i == 48
+			string FileExt = ".ts8"
+		elif i == 49
+			string FileExt = ".lyr"
+		elif i == 50
+			string FileExt = ".ts8"
+		elif i == 51
+			string FileExt = ".lyr"
+		elif i == 52
+			string FileExt = ".scn"
+		elif i == 53
+			string FileExt = ".scn"
+		elif i == 54
+			string FileExt = ".scn"
+		elif i == 55
+			string FileExt = ".ts8"
+		elif i == 56
+			string FileExt = ".lyr"
+		elif i == 57
+			string FileExt = ".ts8"
+		elif i == 58
+			string FileExt = ".lyr"
+		elif i == 59
+			string FileExt = ".ts8"
+		elif i == 60
+			string FileExt = ".lyr"
+		elif i == 61
+			string FileExt = ".scn"
+		elif i == 62
+			string FileExt = ".scn"
+		elif i == 63
+			string FileExt = ".scn"
+		elif i == 64
+			string FileExt = ".ts8"
+		elif i == 65
+			string FileExt = ".lyr"
+		elif i == 66
+			string FileExt = ".ts8"
+		elif i == 67
+			string FileExt = ".lyr"
+		elif i == 68
+			string FileExt = ".scn"
+		elif i == 69
+			string FileExt = ".scn"
+		elif i == 70
+			string FileExt = ".scn"
+		elif i == 71
+			string FileExt = ".scn"
+		elif i == 72
+			string FileExt = ".scn"
+		elif i == 73
+			string FileExt = ".scn"
+		elif i == 74
+			string FileExt = ".scn"
+		elif i == 75
+			string FileExt = ".ts8"
+		elif i == 76
+			string FileExt = ".lyr"
+		elif i == 77
+			string FileExt = ".ts8"
+		elif i == 78
+			string FileExt = ".lyr"
+		else
+			string FileExt = ".an8"
+		endif
+
+		get NextOffset long
+		math NextOffset + FileTableStart
+		math FileSize = NextOffset
+		math FileSize - FileStart
+		string FilePath = "Letterpillar/"
+		string FilePath + FileNum
+		# string FilePath + "_"
+		# string FilePath + FileStart
+		string FilePath + FileExt
+		log FilePath FileStart FileSize
+
+		math FileStart = NextOffset
+	next i
+endif

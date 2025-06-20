@@ -58,8 +58,6 @@ if HeaderCheck == "AM DRAGON"
 			string FileExt = ".lyr"
 		elif i == 20
 			string FileExt = ".scn"
-		elif i == 22
-			string FileExt = ".bin" # No idea what this is supposed to be.
 		elif i == 202
 			string FileExt = ".scn"
 		elif i == 203

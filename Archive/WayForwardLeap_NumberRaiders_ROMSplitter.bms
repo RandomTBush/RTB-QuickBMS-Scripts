@@ -1,0 +1,101 @@
+# Number Raiders ROM-splitting script written by Random Talking Bush.
+# Supports both the US (Number Raiders) and French (À la conquête des nombres!) releases.
+# All .ANM/.AN8 files have a simple byte pad compression.
+# Use this in tandem with my respective Python scripts to extract graphics data from the game.
+
+endian little
+
+goto 0x220 0 SEEK_SET
+get HeaderStart short
+goto HeaderStart 0 SEEK_SET
+get HeaderCheck string
+
+if HeaderCheck == "Number Raiders" or HeaderCheck == "fLAN-Leapster Arcade Number Raiders FR"
+	if HeaderCheck == "Number Raiders"
+		# US version.
+		math FileTableStart = 0x83720
+	elif HeaderCheck == "fLAN-Leapster Arcade Number Raiders FR"
+		# French version. IDs 29 and 30 are exclusive to the French version, 31-39 correspond to 29-37 in the English version.
+		# File differences are in IDs 8, 10, 13-18, 24, 28, and 34-39 (32-37 in the English version), 31 (29) and 33 (31) only have changes to pair the LYR and TS8 file IDs.
+		math FileTableStart = 0x82040
+	endif
+	goto FileTableStart 0 SEEK_SET
+	get FileCount long
+	math FileCount - 1 # Last "file" doesn't appear to be a file at all.
+	get FileStart long
+	math FileStart + FileTableStart
+
+	# File extensions are hardcoded as there seems to be no way to differentiate them otherwise.
+	for i = 0 < FileCount
+		set FileNum = i
+		math FileNum + 1
+		if i == 0
+			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
+		elif i == 1
+			string FileExt = ".ts8"
+		elif i == 2
+			string FileExt = ".an8"
+		elif i == 5
+			string FileExt = ".an8"
+		elif i == 8
+			string FileExt = ".an8"
+		elif i == 10
+			string FileExt = ".an8"
+		elif i == 28 and HeaderCheck == "Number Raiders"
+			string FileExt = ".scn"
+		elif i == 29 and HeaderCheck == "Number Raiders"
+			string FileExt = ".ts8"
+		elif i == 30 and HeaderCheck == "Number Raiders"
+			string FileExt = ".lyr"
+		elif i == 31 and HeaderCheck == "Number Raiders"
+			string FileExt = ".ts8"
+		elif i == 32 and HeaderCheck == "Number Raiders"
+			string FileExt = ".lyr"
+		elif i == 33 and HeaderCheck == "Number Raiders"
+			string FileExt = ".ts8"
+		elif i == 34 and HeaderCheck == "Number Raiders"
+			string FileExt = ".lyr"
+		elif i == 35 and HeaderCheck == "Number Raiders"
+			string FileExt = ".ts8"
+		elif i == 36 and HeaderCheck == "Number Raiders"
+			string FileExt = ".lyr"
+		elif i == 30 and HeaderCheck == "fLAN-Leapster Arcade Number Raiders FR"
+			string FileExt = ".scn"
+		elif i == 31 and HeaderCheck == "fLAN-Leapster Arcade Number Raiders FR"
+			string FileExt = ".ts8"
+		elif i == 32 and HeaderCheck == "fLAN-Leapster Arcade Number Raiders FR"
+			string FileExt = ".lyr"
+		elif i == 33 and HeaderCheck == "fLAN-Leapster Arcade Number Raiders FR"
+			string FileExt = ".ts8"
+		elif i == 34 and HeaderCheck == "fLAN-Leapster Arcade Number Raiders FR"
+			string FileExt = ".lyr"
+		elif i == 35 and HeaderCheck == "fLAN-Leapster Arcade Number Raiders FR"
+			string FileExt = ".ts8"
+		elif i == 36 and HeaderCheck == "fLAN-Leapster Arcade Number Raiders FR"
+			string FileExt = ".lyr"
+		elif i == 37 and HeaderCheck == "fLAN-Leapster Arcade Number Raiders FR"
+			string FileExt = ".ts8"
+		elif i == 38 and HeaderCheck == "fLAN-Leapster Arcade Number Raiders FR"
+			string FileExt = ".lyr"
+		else
+			string FileExt = ".anm"
+		endif
+
+		get NextOffset long
+		math NextOffset + FileTableStart
+		math FileSize = NextOffset
+		math FileSize - FileStart
+		if HeaderCheck == "Number Raiders"
+			string FilePath = "NumberRaiders/"
+		elif HeaderCheck == "fLAN-Leapster Arcade Number Raiders FR"
+			string FilePath = "NumberRaiders_FR/"
+		endif
+		string FilePath + FileNum
+		# string FilePath + "_"
+		# string FilePath + FileStart
+		string FilePath + FileExt
+		log FilePath FileStart FileSize
+
+		math FileStart = NextOffset
+	next i
+endif

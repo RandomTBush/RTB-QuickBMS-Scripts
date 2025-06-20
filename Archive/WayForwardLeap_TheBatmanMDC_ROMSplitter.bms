@@ -1,0 +1,195 @@
+# The Batman: Multiply, Divide and Conquer ROM-splitting script written by Random Talking Bush.
+# Supports both the US (Multiply, Divide and Conquer) and German (Multipliziere, Dividiere und Regiere) releases.
+# The US ROM is currently MIA, so for now you'll have to find "BAT.lbk" from a certain source code archive and make a few changes to it.
+# Delete "LBK0000000400000003fffff" from the beginning of the file, then go to 0x400000 and delete "LBK0000001400000003d1693".
+# Once both changes are done, it will work with this script.
+# All .ANM/.AN8 files have a simple byte pad compression.
+# Use this in tandem with my respective Python scripts to extract graphics data from the game.
+
+endian little
+
+goto 0x220 0 SEEK_SET
+get HeaderStart short
+goto HeaderStart 0 SEEK_SET
+get HeaderCheck string
+
+if HeaderCheck == "The Batman" or HeaderCheck == "The Batman, German"
+	if HeaderCheck == "The Batman"
+		# US version.
+		math FileTableStart = 0x834A8 # TODO: Fill this in with the actual ROM's address.
+	elif HeaderCheck == "The Batman, German"
+		# German version. Only differences are with the following IDs: 3, 9, 10, 21, 23, 29-31, 33, 35, 37, 73, 89 and 102.
+		math FileTableStart = 0x84088
+	endif
+	goto FileTableStart 0 SEEK_SET
+	get FileCount long
+	math FileCount - 1 # Last "file" doesn't appear to be a file at all.
+	get FileStart long
+	math FileStart + FileTableStart
+
+	# File extensions are hardcoded as there seems to be no way to differentiate them otherwise.
+	for i = 0 < FileCount
+		set FileNum = i
+		math FileNum + 1
+		if i == 0
+			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
+		elif i == 1
+			string FileExt = ".ts8"
+		elif i == 3
+			string FileExt = ".anm"
+		elif i == 4
+			string FileExt = ".anm"
+		elif i == 6
+			string FileExt = ".anm"
+		elif i == 7
+			string FileExt = ".anm"
+		elif i == 37
+			string FileExt = ".anm"
+		elif i == 46
+			string FileExt = ".anm"
+		elif i == 47
+			string FileExt = ".anm"
+		elif i == 48
+			string FileExt = ".anm"
+		elif i == 49
+			string FileExt = ".anm"
+		elif i == 51
+			string FileExt = ".anm"
+		elif i == 52
+			string FileExt = ".anm"
+		elif i == 53
+			string FileExt = ".anm"
+		elif i == 54
+			string FileExt = ".anm"
+		elif i == 55
+			string FileExt = ".anm"
+		elif i == 56
+			string FileExt = ".anm"
+		elif i == 57
+			string FileExt = ".anm"
+		elif i == 58
+			string FileExt = ".anm"
+		elif i == 59
+			string FileExt = ".anm"
+		elif i == 62
+			string FileExt = ".anm"
+		elif i == 73
+			string FileExt = ".scn"
+		elif i == 74
+			string FileExt = ".scn"
+		elif i == 75
+			string FileExt = ".scn"
+		elif i == 76
+			string FileExt = ".scn"
+		elif i == 77
+			string FileExt = ".ts8"
+		elif i == 78
+			string FileExt = ".lyr"
+		elif i == 79
+			string FileExt = ".ts8"
+		elif i == 80
+			string FileExt = ".lyr"
+		elif i == 81
+			string FileExt = ".lyr"
+		elif i == 82
+			string FileExt = ".lyr"
+		elif i == 83
+			string FileExt = ".lyr"
+		elif i == 90
+			string FileExt = ".scn"
+		elif i == 91
+			string FileExt = ".ts8"
+		elif i == 92
+			string FileExt = ".lyr"
+		elif i == 93
+			string FileExt = ".lyr"
+		elif i == 94
+			string FileExt = ".lyr"
+		elif i == 95
+			string FileExt = ".lyr"
+		elif i == 96
+			string FileExt = ".scn"
+		elif i == 97
+			string FileExt = ".scn"
+		elif i == 98
+			string FileExt = ".scn"
+		elif i == 99
+			string FileExt = ".ts8"
+		elif i == 100
+			string FileExt = ".lyr"
+		elif i == 101
+			string FileExt = ".ts8"
+		elif i == 102
+			string FileExt = ".lyr"
+		elif i == 103
+			string FileExt = ".lyr"
+		elif i == 104
+			string FileExt = ".lyr"
+		elif i == 105
+			string FileExt = ".lyr"
+		elif i == 106
+			string FileExt = ".scn"
+		elif i == 107
+			string FileExt = ".scn"
+		elif i == 108
+			string FileExt = ".scn"
+		elif i == 109
+			string FileExt = ".scn"
+		elif i == 110
+			string FileExt = ".ts8"
+		elif i == 111
+			string FileExt = ".lyr"
+		elif i == 112
+			string FileExt = ".ts8"
+		elif i == 113
+			string FileExt = ".lyr"
+		elif i == 114
+			string FileExt = ".lyr"
+		elif i == 115
+			string FileExt = ".lyr"
+		elif i == 116
+			string FileExt = ".lyr"
+		elif i == 117
+			string FileExt = ".scn"
+		elif i == 118
+			string FileExt = ".scn"
+		elif i == 119
+			string FileExt = ".scn"
+		elif i == 120
+			string FileExt = ".scn"
+		elif i == 121
+			string FileExt = ".ts8"
+		elif i == 122
+			string FileExt = ".lyr"
+		elif i == 123
+			string FileExt = ".ts8"
+		elif i == 124
+			string FileExt = ".lyr"
+		elif i == 125
+			string FileExt = ".scn"
+		elif i == 126
+			string FileExt = ".ts8"
+		elif i == 127
+			string FileExt = ".lyr"
+		else
+			string FileExt = ".an8"
+		endif
+
+		get NextOffset long
+		math NextOffset + FileTableStart
+		math FileSize = NextOffset
+		math FileSize - FileStart
+		if HeaderCheck == "The Batman"
+			string FilePath = "TheBatmanMDC/"
+		elif HeaderCheck == "The Batman, German"
+			string FilePath = "TheBatmanMDC_DE/"
+		endif
+		string FilePath + FileNum
+		# string FilePath + "_"
+		# string FilePath + FileStart
+		string FilePath + FileExt
+		log FilePath FileStart FileSize
+
+		math FileStart = NextOffset
+	next i
+endif
