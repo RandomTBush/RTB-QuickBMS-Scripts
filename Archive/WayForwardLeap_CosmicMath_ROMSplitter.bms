@@ -1,4 +1,5 @@
 # Cosmic Math ROM-splitting script written by Random Talking Bush.
+# Supports both the US (Cosmic Math) and German (Weltraum-Mathe) releases.
 # All .ANM/.AN8 files have a simple byte pad compression.
 # Use this in tandem with my respective Python scripts to extract graphics data from the game.
 
@@ -13,11 +14,16 @@ get VersionStart short
 goto VersionStart 0 SEEK_SET
 get VersionCheck string
 
-if HeaderCheck == "CosmicMath"
-	if VersionCheck == "v 1.0"
+if HeaderCheck == "CosmicMath" or HeaderCheck == "CosmicMath, German"
+	if HeaderCheck == "CosmicMath" and VersionCheck == "v 1.0"
+		# US version, v1.0.
 		math FileTableStart = 0x82A80
-	elif VersionCheck == "v 1.1"
+	elif HeaderCheck == "CosmicMath" and VersionCheck == "v 1.1"
+		# US version, v1.1. No graphics differences, but supported anyway.
 		math FileTableStart = 0x80F50
+	elif HeaderCheck == "CosmicMath, German" and VersionCheck == "v 1.0"
+		# German version, v1.0. File differences are in IDs 5, 13, 15, 18, 23-25, 29, 34, 36, 39, 42, 46, 48, 51, 54, 57, 59 and 67.
+		math FileTableStart = 0x82C30
 	endif
 	goto FileTableStart 0 SEEK_SET
 	get FileCount long
@@ -135,7 +141,11 @@ if HeaderCheck == "CosmicMath"
 		math NextOffset + FileTableStart
 		math FileSize = NextOffset
 		math FileSize - FileStart
-		string FilePath = "CosmicMath/"
+		if HeaderCheck == "CosmicMath"
+			string FilePath = "CosmicMath/"
+		elif HeaderCheck == "CosmicMath, German"
+			string FilePath = "CosmicMath_DE/"
+		endif
 		string FilePath + FileNum
 		# string FilePath + "_"
 		# string FilePath + FileStart

@@ -1,4 +1,5 @@
 # Word Chasers ROM-splitting script written by Random Talking Bush.
+# Supports the US (Word Chasers), German (Wörterjäger) and Spanish (El laberinto de las letras) releases.
 # All .ANM/.AN8 files have a simple byte pad compression.
 # Use this in tandem with my respective Python scripts to extract graphics data from the game.
 
@@ -9,8 +10,22 @@ get HeaderStart short
 goto HeaderStart 0 SEEK_SET
 get HeaderCheck string
 
-if HeaderCheck == "Word Chasers"
-	math FileTableStart = 0x80BF0
+if HeaderCheck == "152-11550"
+	# Spanish version has this in the usual location instead.
+	goto 0x220 0 SEEK_SET
+	get HeaderStart short
+	goto HeaderStart 0 SEEK_SET
+	get HeaderCheck string
+endif
+
+if HeaderCheck == "Word Chasers" or HeaderCheck == "Word Chasers, German"
+	if HeaderCheck == "Word Chasers"
+		# US version.
+		math FileTableStart = 0x80BF0
+	elif HeaderCheck == "Word Chasers, German"
+		# German version. File differences are in IDs 5, 8, 10-12, 22, 24-26, 102, 104, 106, 108, 110, 112, 116, 118, 120, 127 and 129.
+		math FileTableStart = 0x80D30
+	endif
 	goto FileTableStart 0 SEEK_SET
 	get FileCount long
 	math FileCount - 1 # Last "file" doesn't appear to be a file at all.
@@ -213,7 +228,236 @@ if HeaderCheck == "Word Chasers"
 		math NextOffset + FileTableStart
 		math FileSize = NextOffset
 		math FileSize - FileStart
-		string FilePath = "WordChasers/"
+		if HeaderCheck == "Word Chasers"
+			string FilePath = "WordChasers/"
+		elif HeaderCheck == "Word Chasers, German"
+			string FilePath = "WordChasers_DE/"
+		endif
+		string FilePath + FileNum
+		# string FilePath + "_"
+		# string FilePath + FileStart
+		string FilePath + FileExt
+		log FilePath FileStart FileSize
+
+		math FileStart = NextOffset
+	next i
+elif HeaderCheck == "Spanish Word Chasers"
+	# Spanish version. Has five files more than the US version (27-31), files afterwards have a slightly different ordering.
+	# Main differences are in IDs 3, 5, 8, 10-13, 15, 22, 23, 25, 26, 35, 107-120, 123, 124, 126, 127, and 129-134.
+	math FileTableStart = 0x82610
+	goto FileTableStart 0 SEEK_SET
+	get FileCount long
+	math FileCount - 1 # Last "file" doesn't appear to be a file at all.
+	get FileStart long
+	math FileStart + FileTableStart
+
+	# File extensions are hardcoded as there seems to be no way to differentiate them otherwise.
+	for i = 0 < FileCount
+		set FileNum = i
+		math FileNum + 1
+		if i == 0
+			string FileExt = ".typ" # Collision chart file, "TYPES.TYP".
+		elif i == 1
+			string FileExt = ".ts8"
+		elif i == 2
+			string FileExt = ".anm"
+		elif i == 3
+			string FileExt = ".an8"
+		elif i == 4
+			string FileExt = ".an8"
+		elif i == 5
+			string FileExt = ".an8"
+		elif i == 6
+			string FileExt = ".an8"
+		elif i == 7
+			string FileExt = ".anm"
+		elif i == 8
+			string FileExt = ".an8"
+		elif i == 9
+			string FileExt = ".an8"
+		elif i == 10
+			string FileExt = ".an8"
+		elif i == 11
+			string FileExt = ".an8"
+		elif i == 12
+			string FileExt = ".an8"
+		elif i == 13
+			string FileExt = ".an8"
+		elif i == 14
+			string FileExt = ".an8"
+		elif i == 15
+			string FileExt = ".anm"
+		elif i == 16
+			string FileExt = ".anm"
+		elif i == 17
+			string FileExt = ".anm"
+		elif i == 18
+			string FileExt = ".anm"
+		elif i == 19
+			string FileExt = ".an8"
+		elif i == 20
+			string FileExt = ".an8"
+		elif i == 21
+			string FileExt = ".an8"
+		elif i == 22
+			string FileExt = ".an8"
+		elif i == 23
+			string FileExt = ".an8"
+		elif i == 24
+			string FileExt = ".an8"
+		elif i == 25
+			string FileExt = ".an8"
+		elif i == 26
+			string FileExt = ".an8"
+		elif i == 27
+			string FileExt = ".an8"
+		elif i == 28
+			string FileExt = ".an8"
+		elif i == 29
+			string FileExt = ".an8"
+		elif i == 30
+			string FileExt = ".an8"
+		elif i == 31
+			string FileExt = ".scn"
+		elif i == 32
+			string FileExt = ".scn"
+		elif i == 33
+			string FileExt = ".scn"
+		elif i == 34
+			string FileExt = ".scn"
+		elif i == 35
+			string FileExt = ".ts8"
+		elif i == 37
+			string FileExt = ".ts8"
+		elif i == 39
+			string FileExt = ".scn"
+		elif i == 40
+			string FileExt = ".ts8"
+		elif i == 42
+			string FileExt = ".ts8"
+		elif i == 44
+			string FileExt = ".ts8"
+		elif i == 46
+			string FileExt = ".ts8"
+		elif i == 48
+			string FileExt = ".ts8"
+		elif i == 50
+			string FileExt = ".ts8"
+		elif i == 52
+			string FileExt = ".ts8"
+		elif i == 54
+			string FileExt = ".ts8"
+		elif i == 56
+			string FileExt = ".ts8"
+		elif i == 58
+			string FileExt = ".ts8"
+		elif i == 60
+			string FileExt = ".ts8"
+		elif i == 62
+			string FileExt = ".ts8"
+		elif i == 64
+			string FileExt = ".ts8"
+		elif i == 66
+			string FileExt = ".ts8"
+		elif i == 68
+			string FileExt = ".scn"
+		elif i == 69
+			string FileExt = ".scn"
+		elif i == 70
+			string FileExt = ".scn"
+		elif i == 71
+			string FileExt = ".scn"
+		elif i == 72
+			string FileExt = ".scn"
+		elif i == 73
+			string FileExt = ".scn"
+		elif i == 74
+			string FileExt = ".scn"
+		elif i == 75
+			string FileExt = ".scn"
+		elif i == 76
+			string FileExt = ".scn"
+		elif i == 77
+			string FileExt = ".scn"
+		elif i == 78
+			string FileExt = ".scn"
+		elif i == 79
+			string FileExt = ".ts8"
+		elif i == 81
+			string FileExt = ".scn"
+		elif i == 82
+			string FileExt = ".ts8"
+		elif i == 92
+			string FileExt = ".scn"
+		elif i == 93
+			string FileExt = ".scn"
+		elif i == 94
+			string FileExt = ".scn"
+		elif i == 95
+			string FileExt = ".scn"
+		elif i == 96
+			string FileExt = ".scn"
+		elif i == 97
+			string FileExt = ".scn"
+		elif i == 98
+			string FileExt = ".scn"
+		elif i == 99
+			string FileExt = ".scn"
+		elif i == 100
+			string FileExt = ".scn"
+		elif i == 101
+			string FileExt = ".scn"
+		elif i == 102
+			string FileExt = ".scn"
+		elif i == 103
+			string FileExt = ".scn"
+		elif i == 104
+			string FileExt = ".scn"
+		elif i == 105
+			string FileExt = ".scn"
+		elif i == 106
+			string FileExt = ".ts8"
+		elif i == 108
+			string FileExt = ".ts8"
+		elif i == 110
+			string FileExt = ".ts8"
+		elif i == 112
+			string FileExt = ".ts8"
+		elif i == 114
+			string FileExt = ".ts8"
+		elif i == 116
+			string FileExt = ".ts8"
+		elif i == 118
+			string FileExt = ".ts8"
+		elif i == 120
+			string FileExt = ".scn"
+		elif i == 121
+			string FileExt = ".scn"
+		elif i == 122
+			string FileExt = ".ts8"
+		elif i == 124
+			string FileExt = ".scn"
+		elif i == 125
+			string FileExt = ".ts8"
+		elif i == 127
+			string FileExt = ".scn"
+		elif i == 128
+			string FileExt = ".ts8"
+		elif i == 130
+			string FileExt = ".ts8"
+		elif i == 132
+			string FileExt = ".ts8"
+		elif i == 134
+			string FileExt = ".scn"
+		else
+			string FileExt = ".lyr" # There's more .LYR files than .AN8, contrary to most other Leapfrog games.
+		endif
+
+		get NextOffset long
+		math NextOffset + FileTableStart
+		math FileSize = NextOffset
+		math FileSize - FileStart
+		string FilePath = "WordChasers_SP/"
 		string FilePath + FileNum
 		# string FilePath + "_"
 		# string FilePath + FileStart
