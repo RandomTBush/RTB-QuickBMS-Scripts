@@ -53,7 +53,7 @@ for i = 0 < FileCount
 	if i == 31
 		math FileSize = 0x2FC
 	endif
-	string FilePath = "ShantaeGBADemo_Battle/"
+	string FilePath = "ShantaeAdvanceDemo_Battle/"
 	string FilePath + FileNum
 	# string FilePath + "_"
 	# string FilePath + FileStart
@@ -71,7 +71,7 @@ for i = 0 < FileCount
 		get TileStart long
 		get TileSize long
 		math TileStart + FileStart
-		string FilePath = "ShantaeGBADemo_Battle/"
+		string FilePath = "ShantaeAdvanceDemo_Battle/"
 		string FilePath + FileNum
 		# string FilePath + "_"
 		# string FilePath + FileStart
@@ -94,7 +94,7 @@ for i = 0 < FileCount
 		elif FileExt == ".ts8"
 			math TileSize * 0x40
 		endif
-		string FilePath = "ShantaeGBADemo_Battle/"
+		string FilePath = "ShantaeAdvanceDemo_Battle/"
 		string FilePath + FileNum
 		# string FilePath + "_"
 		# string FilePath + FileStart
@@ -280,7 +280,7 @@ for i = 0 < FileCount
 	math NextOffset + FileTableStart
 	math FileSize = NextOffset
 	math FileSize - FileStart
-	string FilePath = "ShantaeGBADemo_Main/"
+	string FilePath = "ShantaeAdvanceDemo_Main/"
 	string FilePath + FileNum
 	# string FilePath + "_"
 	# string FilePath + FileStart
@@ -298,7 +298,7 @@ for i = 0 < FileCount
 		get TileStart long
 		get TileSize long
 		math TileStart + FileStart
-		string FilePath = "ShantaeGBADemo_Main/"
+		string FilePath = "ShantaeAdvanceDemo_Main/"
 		string FilePath + FileNum
 		# string FilePath + "_"
 		# string FilePath + FileStart
@@ -321,7 +321,7 @@ for i = 0 < FileCount
 		elif FileExt == ".ts8"
 			math TileSize * 0x40
 		endif
-		string FilePath = "ShantaeGBADemo_Main/"
+		string FilePath = "ShantaeAdvanceDemo_Main/"
 		string FilePath + FileNum
 		# string FilePath + "_"
 		# string FilePath + FileStart
