@@ -1189,7 +1189,7 @@ for i = 0 < FileCount
 	math FileSize = NextOffset
 	math FileSize - FileStart
 	if i == 744
-		math FileSize = 0x6E0
+		math FileSize = 0x6F0
 	endif
 	string FilePath = "ShantaeAdvance_Main/"
 	string FilePath + FileNum
