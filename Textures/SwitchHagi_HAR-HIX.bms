@@ -1,0 +1,43 @@
+# Nintendo Switch "Hagi" Emulator - HAR/HIX Extractor
+# Works with Super Mario 3D All-Stars (Super Mario Sunshine/Galaxy), Pikmin 1+2 and Super Mario Galaxy 1+2
+# Written by Random Talking Bush
+
+endian little
+
+get HARFileName basename
+string HARFileName += .har
+get HIXFileName basename
+string HIXFileName += .hix
+open FDSE HARFileName 0
+open FDSE HIXFileName 1
+
+idstring 0 "\x48\x41\x52\x43"
+get HARFileTotal long 0
+get HARFileSize long 0
+idstring 1 "\x48\x49\x44\x58"
+get FileTotal long 1
+
+for i = 0 < FILETOTAL
+
+	get HashB long 1
+	get HashA long 1
+	string HashA p= "%08x" HashA
+	string HashB p= "%08x" HashB
+	get FileMip byte 1
+	get FileOffset long 1
+	math FileOffset + 0x0C
+	get FileSize long 1
+	get FileName basename
+
+	string FileName + \
+	string FileName + HashA
+	string FileName + HashB
+	if FileMip > 0
+		string FileName + _lod
+		string FileName + FileMip
+	endif
+	string FileName + .png
+
+	log FileName FileOffset FileSize 0
+
+next i
