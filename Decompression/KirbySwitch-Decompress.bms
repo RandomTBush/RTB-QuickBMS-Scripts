@@ -1,0 +1,21 @@
+# Kirby (Nintendo Switch) - File Decompression
+# Works with the following games: Kirby and the Forgotten Land, Kirby's Dream Buffet, Kirby Fighters 2, Kirby: Star Allies, Super Kirby Clash
+# Written by Random Talking Bush
+
+endian big
+goto 0x04
+get COMCHECK long
+
+if COMCHECK = 0x28B52FFD
+	comtype ZSTD # Forgotten Land uses ZSTD instead of LZ4F.
+else
+	comtype COMP_LZ4F
+endif
+
+endian little
+goto 0x00
+get SIZE long
+get ZSIZE asize
+math ZSIZE -= 4
+get NAME basename
+clog NAME 4 ZSIZE SIZE
