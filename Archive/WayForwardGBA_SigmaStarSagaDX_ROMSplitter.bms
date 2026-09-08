@@ -2,16 +2,29 @@
 # Unlike the original Sigma Star Saga, the .TS4, .TS8 and .LYR files are *not* compressed.
 # Use this in tandem with my respective Python scripts to extract graphics data from the game.
 
+# For the Steam version, change the extension of PackedGames.pak to a .zip,
+# then extract it to get a GBA ROM (SigmaStar.gba) and use this script to unpack it as usual.
+
 endian little
-comtype COMP_LZ77WII
 
 # This is where I'd put a header check... if it had one.
 
 # There are two separate filetables for the game.
 
-math FileTableStart = 0x2571B4
+math FileTableStart = 0x2571B4 # Standalone GBA release and "SigmaStarDX_OLD.gba" in the Switch version.
 goto FileTableStart 0 SEEK_SET
-get FileCount long
+get FileCount long # Checking for the expected file count value works well enough.
+
+if FileCount != 334
+	math FileTableStart = 0x258A34 # "SigmaStar.gba" from the Steam and Switch versions.
+	goto FileTableStart 0 SEEK_SET
+	get FileCount long
+	if FileCount != 334
+		print "Not a proper Sigma Star Saga DX ROM."
+		exit
+	endif
+endif
+
 math FileCount - 1 # Last "file" doesn't appear to be a file at all.
 get FileStart long
 math FileStart + FileTableStart
@@ -486,9 +499,20 @@ next i
 
 # The "Shooter" file system has one additional file compared to the original game.
 
-math FileTableStart = 0x7206BC
+math FileTableStart = 0x7206BC # Standalone GBA release and "SigmaStarDX_OLD.gba" in the Switch version.
 goto FileTableStart 0 SEEK_SET
 get FileCount long
+
+if FileCount != 379
+	math FileTableStart = 0x721F3C # "SigmaStar.gba" from the Steam and Switch versions.
+	goto FileTableStart 0 SEEK_SET
+	get FileCount long
+	if FileCount != 379
+		print "Not a proper Sigma Star Saga DX ROM."
+		exit
+	endif
+endif
+
 math FileCount - 1 # Last "file" doesn't appear to be a file at all.
 get FileStart long
 math FileStart + FileTableStart
